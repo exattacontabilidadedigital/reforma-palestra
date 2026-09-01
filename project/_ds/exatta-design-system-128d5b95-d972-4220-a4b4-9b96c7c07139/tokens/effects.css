@@ -1,0 +1,37 @@
+/* Exatta — Radii, borders, shadows, motion */
+:root {
+  /* Radii */
+  --radius-xs:   4px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-2xl:  28px;
+  --radius-pill: 999px;
+
+  /* Border widths */
+  --border-w:      1px;
+  --border-w-thick: 1.5px;
+
+  /* Shadows — soft, cool-tinted (violet-neutral), layered.
+     Elevation grows with spread + blur, never harshness. */
+  --shadow-xs:  0 1px 2px rgba(23, 23, 28, 0.05);
+  --shadow-sm:  0 1px 2px rgba(23, 23, 28, 0.06), 0 2px 6px rgba(23, 23, 28, 0.05);
+  --shadow-md:  0 2px 4px rgba(23, 23, 28, 0.05), 0 8px 20px rgba(23, 23, 28, 0.07);
+  --shadow-lg:  0 4px 8px rgba(23, 23, 28, 0.06), 0 18px 40px rgba(23, 23, 28, 0.10);
+  --shadow-xl:  0 8px 16px rgba(23, 23, 28, 0.08), 0 32px 64px rgba(23, 23, 28, 0.14);
+  /* Brand glow — for primary CTAs (red) */
+  --shadow-brand: 0 4px 14px rgba(191, 2, 2, 0.28);
+  --ring-brand:   0 0 0 3px rgba(23, 15, 73, 0.20);
+  /* Accent glow — navy */
+  --shadow-accent: 0 4px 14px rgba(23, 15, 73, 0.28);
+  --ring-error:   0 0 0 3px rgba(191, 2, 2, 0.20);
+
+  /* Motion */
+  --ease-out:   cubic-bezier(0.16, 1, 0.3, 1); /* @kind other */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* @kind other */
+  --dur-fast:   120ms; /* @kind other */
+  --dur-base:   200ms; /* @kind other */
+  --dur-slow:   320ms; /* @kind other */
+}

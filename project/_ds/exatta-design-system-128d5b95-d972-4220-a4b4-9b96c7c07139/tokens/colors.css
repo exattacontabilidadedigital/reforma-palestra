@@ -1,0 +1,147 @@
+/* Exatta — Color tokens
+   Brand identity: red (#BF0202, the logo star) + deep navy (#170F49).
+   Navy = primary interactive colour (buttons, links, focus, active nav).
+   Red  = brand accent (logo mark, key highlights, destructive, money-out).
+   Cool slate neutrals · green/amber/blue financial semantics. */
+:root {
+  /* ---- Navy (primary / ink) ---- */
+  --navy-50:  #F3F3F9;
+  --navy-100: #E5E4F1;
+  --navy-200: #C9C7E1;
+  --navy-300: #A5A1CC;
+  --navy-400: #726CA5;
+  --navy-500: #453E80;
+  --navy-600: #2C2566;
+  --navy-700: #1F1857;
+  --navy-800: #170F49; /* brand navy */
+  --navy-900: #100A36;
+  --navy-950: #080520;
+
+  /* ---- Red (brand accent / negative) ---- */
+  --red-50:  #FEF2F2;
+  --red-100: #FCE0E0;
+  --red-200: #F7B5B5;
+  --red-300: #EE8585;
+  --red-400: #E25252;
+  --red-500: #D41A1A;
+  --red-600: #BF0202; /* brand red */
+  --red-700: #9E0303;
+  --red-800: #800505;
+  --red-900: #660808;
+  --red-950: #3D0404;
+
+  /* ---- Neutral (cool slate) ---- */
+  --neutral-0:   #FFFFFF;
+  --neutral-25:  #FBFBFD;
+  --neutral-50:  #F7F7FB;
+  --neutral-100: #EFEFF4;
+  --neutral-200: #E2E2EA;
+  --neutral-300: #CBCBD6;
+  --neutral-400: #9A9AAB;
+  --neutral-500: #6E6E80;
+  --neutral-600: #52525F;
+  --neutral-700: #3D3D48;
+  --neutral-800: #26262E;
+  --neutral-900: #17171C;
+  --neutral-950: #0D0D11;
+
+  /* ---- Positive (green — credits, gains, paid) ---- */
+  --positive-50:  #ECFDF3;
+  --positive-100: #D1FADF;
+  --positive-500: #16A34A;
+  --positive-600: #15803D;
+  --positive-700: #166534;
+
+  /* ---- Negative (red — debits, overdue, errors) — shares the brand red family ---- */
+  --negative-50:  #FEF2F2;
+  --negative-100: #FCE0E0;
+  --negative-500: #D41A1A;
+  --negative-600: #BF0202;
+  --negative-700: #9E0303;
+
+  /* ---- Warning (amber — due soon, pending) ---- */
+  --warning-50:  #FFFBEB;
+  --warning-100: #FEF3C7;
+  --warning-500: #D97706;
+  --warning-600: #B45309;
+  --warning-700: #92400E;
+
+  /* ---- Info (blue — informational, links) ---- */
+  --info-50:  #EFF6FF;
+  --info-100: #DBEAFE;
+  --info-500: #2563EB;
+  --info-600: #1D4ED8;
+
+  /* ---- Mint (secondary accent — freshness, digital) ---- */
+  --mint-50:  #ECFDF9;
+  --mint-100: #D0FBEF;
+  --mint-400: #34D3AE;
+  --mint-500: #14B892;
+
+  /* ---- Teal (bright accent — highlights, digital energy) ---- */
+  --teal-50:  #E4FDFA;
+  --teal-100: #BFF9F2;
+  --teal-200: #82F2E7;
+  --teal-300: #38E7D8;
+  --teal-400: #03DCC9; /* accent */
+  --teal-500: #06BCAC;
+  --teal-600: #089A8E;
+  --teal-700: #0B7A70;
+  --teal-800: #0E5D56;
+  --teal-900: #103F3B;
+
+  /* =========================================================
+     SEMANTIC ALIASES
+     ========================================================= */
+  /* Brand — primary interactive = red (the logo star) */
+  --brand:            var(--red-600);
+  --brand-hover:      var(--red-700);
+  --brand-active:     var(--red-800);
+  --brand-subtle:     var(--red-50);
+  --brand-subtle-2:   var(--red-100);
+  --on-brand:         var(--neutral-0);
+
+  /* Accent — deep navy (structure, ink emphasis, secondary strong) */
+  --accent:           var(--navy-800);
+  --accent-hover:     var(--navy-900);
+  --accent-subtle:    var(--navy-50);
+  --accent-subtle-2:  var(--navy-100);
+  --on-accent:        var(--neutral-0);
+
+  /* Highlight — bright teal (badges of novidade, digital emphasis, data viz) */
+  --highlight:         var(--teal-400);
+  --highlight-strong:  var(--teal-600);
+  --highlight-surface: var(--teal-50);
+  --on-highlight:      var(--navy-900);
+
+  /* Surfaces */
+  --surface-app:      var(--neutral-50);
+  --surface-card:     var(--neutral-0);
+  --surface-sunken:   var(--neutral-100);
+  --surface-inverse:  var(--navy-900);
+  --surface-brand:    var(--red-600);
+
+  /* Text */
+  --text-strong:      var(--navy-900);
+  --text-body:        var(--neutral-700);
+  --text-muted:       var(--neutral-500);
+  --text-subtle:      var(--neutral-400);
+  --text-on-brand:    var(--neutral-0);
+  --text-on-inverse:  var(--neutral-100);
+  --text-link:        var(--navy-700);
+
+  /* Borders */
+  --border-subtle:    var(--neutral-200);
+  --border-default:   var(--neutral-300);
+  --border-strong:    var(--neutral-400);
+  --border-brand:     var(--red-600);
+  --focus-ring:       var(--navy-400);
+
+  /* Financial semantics */
+  --credit:           var(--positive-600);
+  --credit-surface:   var(--positive-50);
+  --debit:            var(--red-600);
+  --debit-surface:    var(--red-50);
+  --pending:          var(--warning-600);
+  --pending-surface:  var(--warning-50);
+}

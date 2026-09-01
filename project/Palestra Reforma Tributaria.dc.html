@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/styles.css">
+  <script src="_ds/exatta-design-system-128d5b95-d972-4220-a4b4-9b96c7c07139/_ds_bundle.js"></script>
+  <style>
+    body { margin: 0; background: var(--surface-app); color: var(--text-body); font-family: var(--font-body); }
+    a { color: var(--text-link); text-decoration: none; }
+    a:hover { color: var(--brand); }
+    * { box-sizing: border-box; }
+  </style>
+</helmet>
+
+<div style="width:100%">
+
+  <header style="position:sticky;top:0;z-index:20;background:rgba(8,5,32,0.92);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.10)">
+    <div style="max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <img src="assets/exatta-logo-white.png" alt="Exatta Contabilidade Digital" style="height:30px;width:auto;display:block">
+      <div style="display:flex;align-items:center;gap:20px">
+        <a href="https://wa.me/5599991660824" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.22);color:#fff;font:var(--fw-semibold) 14px/1 var(--font-body)" style-hover="border-color:var(--teal-400);color:var(--teal-200)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.25-4.36c0-4.54 3.7-8.23 8.24-8.23 4.54 0 8.23 3.69 8.23 8.23 0 4.54-3.7 8.21-8.25 8.21Zm4.52-6.15c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.06-.39-2.01-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.01-.39.11-.51.13-.14.29-.35.43-.52.09-.11.14-.21.21-.35.07-.14.03-.27-.02-.39-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.72 2.63 4.17 3.69.58.25 1.04.4 1.39.51.53.17 1 .14 1.37.09.42-.06 1.29-.53 1.47-1.04.18-.51.18-.95.13-1.04-.05-.09-.19-.15-.44-.27Z"/></svg>
+          <span>WhatsApp</span>
+        </a>
+        <a href="#inscricao" style="display:inline-flex;align-items:center;height:38px;padding:0 18px;border-radius:var(--radius-md);background:var(--brand);color:#fff;font:var(--fw-semibold) 15px/1.45 var(--font-body);box-shadow:var(--shadow-brand)" style-hover="background:var(--brand-hover);transform:translateY(-1px)">Garantir minha vaga</a>
+      </div>
+    </div>
+  </header>
+
+  <section style="background:linear-gradient(160deg,var(--navy-800) 0%,var(--navy-950) 100%);position:relative;overflow:hidden">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,0.10) 1px, transparent 1px);background-size:22px 22px;opacity:0.5"></div>
+    <div style="position:relative;max-width:1120px;margin:0 auto;padding:64px 24px 72px;display:grid;grid-template-columns:1.08fr 0.92fr;gap:56px;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:28px">
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <span style="display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;border-radius:var(--radius-pill);background:rgba(3,220,201,0.14);border:1px solid rgba(3,220,201,0.38);color:var(--teal-200);font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.08em;text-transform:uppercase">Palestra presencial · entrada gratuita</span>
+          <span style="font:var(--type-body-sm);color:rgba(255,255,255,0.62)">Vagas limitadas ao auditório</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <h1 style="margin:0;font:var(--fw-extra) 58px/1.03 var(--font-display);letter-spacing:-0.03em;color:#fff;text-wrap:pretty">Setembro decide 2027 — o que sua empresa tem que resolver agora</h1>
+          <p style="margin:0;font:400 21px/1.5 var(--font-body);color:rgba(255,255,255,0.82);max-width:38ch;text-wrap:pretty">Simples híbrido ou convencional, nota fiscal com IBS e CBS, split payment e RAD</p>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:14px">
+          <div style="flex:1 1 190px;padding:16px 18px;border-radius:var(--radius-lg);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;gap:6px">
+            <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--teal-300)">Data e hora</span>
+            <span style="font:var(--fw-bold) 20px/1.2 var(--font-mono);color:#fff">11/09/2026 · 19:30</span>
+            <span style="font:var(--type-body-sm);color:rgba(255,255,255,0.62)">Sexta-feira, 45 minutos</span>
+          </div>
+          <div style="flex:1 1 190px;padding:16px 18px;border-radius:var(--radius-lg);background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);display:flex;flex-direction:column;gap:6px">
+            <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--teal-300)">Local</span>
+            <span style="font:var(--fw-bold) 17px/1.25 var(--font-body);color:#fff">ACIA — Associação Comercial de Açailândia</span>
+            <span style="font:var(--type-body-sm);color:rgba(255,255,255,0.62)">Açailândia — MA</span>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:14px;align-items:flex-start;padding:20px 22px;border-radius:var(--radius-lg);background:rgba(191,2,2,0.14);border-left:3px solid var(--brand)">
+          <p style="margin:0;font:var(--fw-semibold) 18px/1.45 var(--font-body);color:#fff;text-wrap:pretty">“Você sai daqui sabendo o que fazer na segunda-feira de manhã — e com o papel na mão.”</p>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;color:rgba(255,255,255,0.72);font:var(--type-body-sm)">
+          <span style="font:var(--fw-bold) 15px/1 var(--font-mono);color:var(--teal-300)">{{ diasRestantes }}</span>
+          <span>até o prazo de decisão: 30 de setembro</span>
+        </div>
+      </div>
+
+      <div id="inscricao" style="background:var(--surface-card);border-radius:20px;box-shadow:var(--shadow-xl);padding:28px;display:flex;flex-direction:column;gap:18px;scroll-margin-top:90px">
+        <sc-if value="{{ enviado }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:14px;align-items:flex-start;padding:8px 0">
+            <span style="display:inline-flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:var(--radius-pill);background:var(--positive-50);color:var(--positive-600)">
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Icon" name="check" size="{{ 28 }}" hint-size="28px,28px"></x-import>
+            </span>
+            <h2 style="margin:0;font:var(--fw-extra) 26px/1.15 var(--font-display);letter-spacing:-0.02em;color:var(--text-strong)">Inscrição confirmada</h2>
+            <p style="margin:0;font:var(--type-body);color:var(--text-body)">Enviamos os detalhes para o seu e-mail e vamos confirmar sua presença pelo WhatsApp. Chegue às 19:15 para pegar o kit impresso na entrada.</p>
+            <div style="width:100%;padding:14px 16px;border-radius:var(--radius-md);background:var(--surface-sunken);display:flex;flex-direction:column;gap:4px">
+              <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--text-muted)">Anote na agenda</span>
+              <span style="font:var(--fw-bold) 16px/1.3 var(--font-mono);color:var(--text-strong)">11/09/2026 · 19:30 · ACIA</span>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ mostrarFormulario }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:18px">
+            <div style="display:flex;flex-direction:column;gap:6px">
+              <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--brand)">Inscrição gratuita</span>
+              <h2 style="margin:0;font:var(--fw-extra) 27px/1.12 var(--font-display);letter-spacing:-0.02em;color:var(--text-strong)">Garanta sua vaga</h2>
+              <p style="margin:0;font:var(--type-body-sm);color:var(--text-muted)">Leva menos de um minuto. A gente confirma tudo pelo WhatsApp.</p>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Input" label="Nome completo" placeholder="Como devemos te chamar" required="{{ true }}" value="{{ f.nome }}" onChange="{{ onNome }}" hint-size="100%,72px"></x-import>
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Input" label="WhatsApp" type="tel" placeholder="(99) 99999-9999" required="{{ true }}" mono="{{ true }}" value="{{ f.whats }}" onChange="{{ onWhats }}" hint-size="100%,72px"></x-import>
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Input" label="E-mail" type="email" placeholder="voce@suaempresa.com.br" required="{{ true }}" value="{{ f.email }}" onChange="{{ onEmail }}" hint-size="100%,72px"></x-import>
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Input" label="Empresa" placeholder="Razão social ou nome fantasia" value="{{ f.empresa }}" onChange="{{ onEmpresa }}" hint-size="100%,72px"></x-import>
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Select" label="Regime tributário atual" value="{{ f.regime }}" onChange="{{ onRegime }}" hint-size="100%,72px">
+                <option value="">Selecione</option>
+                <option value="simples">Simples Nacional</option>
+                <option value="presumido">Lucro Presumido</option>
+                <option value="real">Lucro Real</option>
+                <option value="mei">MEI</option>
+                <option value="nao-sei">Não sei / vou abrir empresa</option>
+              </x-import>
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Select" label="Setor de atuação" value="{{ f.setor }}" onChange="{{ onSetor }}" hint-size="100%,72px">
+                <option value="">Selecione</option>
+                <option value="comercio">Comércio</option>
+                <option value="servicos">Serviços</option>
+                <option value="industria">Indústria</option>
+                <option value="agro">Agronegócio</option>
+                <option value="transporte">Transporte e logística</option>
+                <option value="outro">Outro</option>
+              </x-import>
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Checkbox" label="Quero receber a planilha de simulação e o acesso à ferramenta de diagnóstico por e-mail" checked="{{ f.kit }}" onChange="{{ onKit }}" hint-size="100%,44px"></x-import>
+            </div>
+
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <x-import component-from-global-scope="ExattaDesignSystem_128d5b.Button" fullWidth="{{ true }}" size="lg" onClick="{{ enviar }}" hint-size="100%,50px">Confirmar inscrição</x-import>
+              <p style="margin:0;font:400 12px/1.4 var(--font-body);color:var(--text-muted);text-align:center">Usamos seus dados apenas para a organização do evento.</p>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--surface-card);border-bottom:1px solid var(--border-subtle)">
+    <div style="max-width:1120px;margin:0 auto;padding:56px 24px;display:grid;grid-template-columns:0.95fr 1.05fr;gap:48px;align-items:start">
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--brand)">Por que agora</span>
+        <h2 style="margin:0;font:var(--fw-extra) 36px/1.1 var(--font-display);letter-spacing:-0.02em;color:var(--text-strong);text-wrap:pretty">A reforma tributária deixou de ser assunto de 2033.</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <p style="margin:0;font:400 18px/1.6 var(--font-body);color:var(--text-body);text-wrap:pretty">Em setembro de 2026 abre a única janela do ano para a empresa do Simples Nacional decidir se vai apurar IBS e CBS dentro ou fora do DAS — e a escolha vale a partir de janeiro de 2027.</p>
+        <p style="margin:0;font:400 18px/1.6 var(--font-body);color:var(--text-body);text-wrap:pretty">Em paralelo, a nota fiscal já mudou: CST e cClassTrib passam a ser obrigatórios para o Simples em 4 de janeiro de 2027, e a rejeição da nota não avisa antes.</p>
+        <p style="margin:0;font:400 18px/1.6 var(--font-body);color:var(--text-body);text-wrap:pretty">Esta palestra vai direto ao que precisa ser decidido agora: o regime, o cadastro fiscal, o preço e o caixa. Sem teoria de transição, sem alíquota de 2033. Ao final, cada participante leva um framework de decisão preenchível e um plano de 90 dias.</p>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--surface-app)">
+    <div style="max-width:1120px;margin:0 auto;padding:64px 24px">
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:32px">
+        <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--brand)">O que você decide na prática</span>
+        <h2 style="margin:0;font:var(--fw-extra) 36px/1.1 var(--font-display);letter-spacing:-0.02em;color:var(--text-strong)">Quatro decisões, uma noite</h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">
+        <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm)" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-lg)">
+          <span style="color:var(--brand)"><x-import component-from-global-scope="ExattaDesignSystem_128d5b.Icon" name="shield" size="{{ 24 }}" hint-size="24px,24px"></x-import></span>
+          <h3 style="margin:0;font:var(--fw-bold) 19px/1.25 var(--font-display);letter-spacing:-0.01em;color:var(--text-strong)">O regime</h3>
+          <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">Simples híbrido ou convencional: qual dos dois caminhos sobra para o seu tipo de cliente e sua margem.</p>
+        </div>
+        <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm)" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-lg)">
+          <span style="color:var(--brand)"><x-import component-from-global-scope="ExattaDesignSystem_128d5b.Icon" name="file" size="{{ 24 }}" hint-size="24px,24px"></x-import></span>
+          <h3 style="margin:0;font:var(--fw-bold) 19px/1.25 var(--font-display);letter-spacing:-0.01em;color:var(--text-strong)">O cadastro fiscal</h3>
+          <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">CST e cClassTrib em cada produto e serviço. Sem isso, a nota é rejeitada e a venda para.</p>
+        </div>
+        <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm)" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-lg)">
+          <span style="color:var(--brand)"><x-import component-from-global-scope="ExattaDesignSystem_128d5b.Icon" name="chart" size="{{ 24 }}" hint-size="24px,24px"></x-import></span>
+          <h3 style="margin:0;font:var(--fw-bold) 19px/1.25 var(--font-display);letter-spacing:-0.01em;color:var(--text-strong)">O preço</h3>
+          <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">Crédito para o seu cliente, custo para você: como o IBS e a CBS mexem na sua tabela.</p>
+        </div>
+        <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:12px;box-shadow:var(--shadow-sm)" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-lg)">
+          <span style="color:var(--brand)"><x-import component-from-global-scope="ExattaDesignSystem_128d5b.Icon" name="wallet" size="{{ 24 }}" hint-size="24px,24px"></x-import></span>
+          <h3 style="margin:0;font:var(--fw-bold) 19px/1.25 var(--font-display);letter-spacing:-0.01em;color:var(--text-strong)">O caixa</h3>
+          <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">Split payment e RAD: o imposto sai na hora do recebimento. Seu fluxo de caixa muda de forma.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--surface-card);border-top:1px solid var(--border-subtle)">
+    <div style="max-width:1120px;margin:0 auto;padding:64px 24px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start">
+
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--brand)">Ficha da palestra</span>
+          <h2 style="margin:0;font:var(--fw-extra) 34px/1.1 var(--font-display);letter-spacing:-0.02em;color:var(--text-strong)">Como vai funcionar</h2>
+        </div>
+        <div style="display:flex;flex-direction:column;border:1px solid var(--border-subtle);border-radius:var(--radius-lg);overflow:hidden">
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border-subtle)">
+            <span style="font:var(--fw-semibold) 15px/1.45 var(--font-body);color:var(--text-muted)">Público</span>
+            <span style="font:var(--type-body-sm);color:var(--text-strong)">Empresários optantes pelo Simples Nacional (clientes e prospects)</span>
+          </div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border-subtle)">
+            <span style="font:var(--fw-semibold) 15px/1.45 var(--font-body);color:var(--text-muted)">Formato</span>
+            <span style="font:var(--type-body-sm);color:var(--text-strong)">10 min de exposição + 25 a 30 min de bate-papo aberto + 5 min de apresentação do serviço de classificação</span>
+          </div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border-subtle)">
+            <span style="font:var(--fw-semibold) 15px/1.45 var(--font-body);color:var(--text-muted)">Duração total</span>
+            <span style="font:var(--fw-bold) 15px/1.4 var(--font-mono);color:var(--text-strong)">45 minutos</span>
+          </div>
+          <div style="display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 20px">
+            <span style="font:var(--fw-semibold) 15px/1.45 var(--font-body);color:var(--text-muted)">Entregável</span>
+            <span style="font:var(--type-body-sm);color:var(--text-strong)">Kit prático: árvore de decisão impressa, planilha de simulação e ferramenta web de diagnóstico</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--brand)">Kit prático</span>
+          <h2 style="margin:0;font:var(--fw-extra) 34px/1.1 var(--font-display);letter-spacing:-0.02em;color:var(--text-strong)">O que você leva embora</h2>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:20px;border-radius:var(--radius-lg);background:var(--surface-sunken)">
+            <span style="font:var(--fw-bold) 15px/1 var(--font-mono);color:var(--brand);padding-top:3px">01</span>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h3 style="margin:0;font:var(--fw-bold) 17px/1.3 var(--font-body);color:var(--text-strong)">Árvore de decisão impressa</h3>
+              <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">O papel na mão: cada pergunta leva a uma resposta de regime.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:20px;border-radius:var(--radius-lg);background:var(--surface-sunken)">
+            <span style="font:var(--fw-bold) 15px/1 var(--font-mono);color:var(--brand);padding-top:3px">02</span>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h3 style="margin:0;font:var(--fw-bold) 17px/1.3 var(--font-body);color:var(--text-strong)">Planilha de simulação</h3>
+              <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">Coloque seu faturamento e sua margem, veja o efeito nos dois caminhos.</p>
+            </div>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:20px;border-radius:var(--radius-lg);background:var(--surface-sunken)">
+            <span style="font:var(--fw-bold) 15px/1 var(--font-mono);color:var(--brand);padding-top:3px">03</span>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <h3 style="margin:0;font:var(--fw-bold) 17px/1.3 var(--font-body);color:var(--text-strong)">Ferramenta web de diagnóstico</h3>
+              <p style="margin:0;font:var(--type-body-sm);color:var(--text-body)">Acesso liberado para os participantes, com o plano de 90 dias.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:linear-gradient(140deg,var(--navy-800),var(--navy-950))">
+    <div style="max-width:1120px;margin:0 auto;padding:64px 24px;display:flex;flex-direction:column;gap:28px;align-items:flex-start">
+      <span style="font:var(--fw-semibold) 12px/1.3 var(--font-body);letter-spacing:0.10em;text-transform:uppercase;color:var(--teal-300)">Prazo</span>
+      <h2 style="margin:0;font:var(--fw-extra) 42px/1.08 var(--font-display);letter-spacing:-0.025em;color:#fff;max-width:24ch;text-wrap:pretty">Reforma tributária: Simples híbrido ou convencional? Que decidir até 30 de setembro.</h2>
+      <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center">
+        <a href="#inscricao" style="display:inline-flex;align-items:center;height:50px;padding:0 26px;border-radius:var(--radius-md);background:var(--brand);color:#fff;font:var(--fw-semibold) 16px/1 var(--font-body);box-shadow:var(--shadow-brand)" style-hover="background:var(--brand-hover);transform:translateY(-1px)">Fazer minha inscrição</a>
+        <a href="https://wa.me/5599991660824" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 22px;border-radius:var(--radius-md);border:1px solid rgba(3,220,201,0.45);background:rgba(3,220,201,0.10);color:var(--teal-200);font:var(--fw-semibold) 16px/1 var(--font-body)" style-hover="background:rgba(3,220,201,0.18);transform:translateY(-1px)">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.25-4.36c0-4.54 3.7-8.23 8.24-8.23 4.54 0 8.23 3.69 8.23 8.23 0 4.54-3.7 8.21-8.25 8.21Zm4.52-6.15c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.06-.39-2.01-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.01-.39.11-.51.13-.14.29-.35.43-.52.09-.11.14-.21.21-.35.07-.14.03-.27-.02-.39-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.72 2.63 4.17 3.69.58.25 1.04.4 1.39.51.53.17 1 .14 1.37.09.42-.06 1.29-.53 1.47-1.04.18-.51.18-.95.13-1.04-.05-.09-.19-.15-.44-.27Z"/></svg>
+          <span>Dúvidas? (99) 99166-0824</span>
+        </a>
+        <span style="font:var(--type-body-sm);color:rgba(255,255,255,0.66)">11/09/2026 · 19:30 · ACIA, Açailândia — MA</span>
+      </div>
+    </div>
+  </section>
+
+  <footer style="background:var(--navy-950);border-top:1px solid rgba(255,255,255,0.10)">
+    <div style="max-width:1120px;margin:0 auto;padding:36px 24px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
+      <img src="assets/exatta-logo-white.png" alt="Exatta Contabilidade Digital" style="height:28px;width:auto;display:block">
+      <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+        <a href="https://wa.me/5599991660824" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;font:var(--fw-semibold) 16px/1.3 var(--font-mono);color:var(--teal-300)" style-hover="color:var(--teal-200)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91C21.96 6.45 17.5 2 12.04 2Zm0 18.02h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.11.82.83-3.04-.2-.31a8.16 8.16 0 0 1-1.25-4.36c0-4.54 3.7-8.23 8.24-8.23 4.54 0 8.23 3.69 8.23 8.23 0 4.54-3.7 8.21-8.25 8.21Zm4.52-6.15c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.06-.39-2.01-1.24-.74-.66-1.24-1.48-1.39-1.73-.14-.25-.01-.39.11-.51.13-.14.29-.35.43-.52.09-.11.14-.21.21-.35.07-.14.03-.27-.02-.39-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.16 0-.43.06-.65.31-.23.25-.87.85-.87 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.72 2.63 4.17 3.69.58.25 1.04.4 1.39.51.53.17 1 .14 1.37.09.42-.06 1.29-.53 1.47-1.04.18-.51.18-.95.13-1.04-.05-.09-.19-.15-.44-.27Z"/></svg>
+          <span>(99) 99166-0824</span>
+        </a>
+        <span style="font:var(--type-body-sm);color:rgba(255,255,255,0.55)">Realização: Exatta Contabilidade Digital · Apoio: ACIA — Associação Comercial de Açailândia</span>
+      </div>
+    </div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{}">
+class Component extends DCLogic {
+  state = {
+    enviado: false,
+    f: { nome: '', whats: '', email: '', empresa: '', regime: '', setor: '', kit: true }
+  };
+
+  set(k) {
+    return (e) => {
+      const v = e && e.target ? (e.target.type === 'checkbox' ? e.target.checked : e.target.value) : e;
+      this.setState(s => ({ f: Object.assign({}, s.f, { [k]: v }) }));
+    };
+  }
+
+  renderVals() {
+    const prazo = new Date(2026, 8, 30, 23, 59);
+    const dias = Math.max(0, Math.ceil((prazo - new Date()) / 86400000));
+    return {
+      f: this.state.f,
+      enviado: this.state.enviado,
+      mostrarFormulario: !this.state.enviado,
+      diasRestantes: dias === 1 ? '1 dia' : dias + ' dias',
+      onNome: this.set('nome'),
+      onWhats: this.set('whats'),
+      onEmail: this.set('email'),
+      onEmpresa: this.set('empresa'),
+      onRegime: this.set('regime'),
+      onSetor: this.set('setor'),
+      onKit: this.set('kit'),
+      enviar: () => this.setState({ enviado: true })
+    };
+  }
+}
+</script>
+</body>
+</html>
