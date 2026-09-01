@@ -1,3 +1,12 @@
+> **Implementação pronta:** a landing page de inscrições está em
+> [`site/`](./site/) — site estático, sem build. Comece por
+> [`site/README.md`](./site/README.md) para publicar e para ligar o formulário
+> à planilha do Google.
+>
+> O restante deste arquivo é o texto original do handoff do Claude Design.
+
+---
+
 # CODING AGENTS: READ THIS FIRST
 
 This is a **handoff bundle** from Claude Design (claude.ai/design).

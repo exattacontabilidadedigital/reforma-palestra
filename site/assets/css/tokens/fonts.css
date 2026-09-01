@@ -1,0 +1,6 @@
+/* Exatta — Webfonts
+   Sora        → display / headings (geometric, confident, digital)
+   Plus Jakarta Sans → body / UI (humanist, friendly, professional)
+   JetBrains Mono    → financial figures / tabular numerals
+   NOTE: served from Google Fonts CDN (no local binaries available). */
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
