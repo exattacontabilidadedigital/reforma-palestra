@@ -4,3 +4,12 @@
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+
+# Banco local de testes
+*.db
+*.db-wal
+*.db-shm

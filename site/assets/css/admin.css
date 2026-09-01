@@ -1,0 +1,422 @@
+/* ==========================================================================
+   Painel de inscritos — mesma linguagem visual da landing page.
+   Ferramenta de trabalho: a leitura vem antes do enfeite.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+body {
+  margin: 0;
+  background: var(--surface-app);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+.oculto-visual {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
+
+.ico-14 { width: 14px; height: 14px; flex: none; }
+.ico-16 { width: 16px; height: 16px; flex: none; }
+.ico-18 { width: 18px; height: 18px; flex: none; }
+
+/* Botões ------------------------------------------------------------------ */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 38px;
+  padding: 0 var(--space-4);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font: var(--fw-semibold) var(--text-sm)/1 var(--font-body);
+  letter-spacing: var(--tracking-snug);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--dur-fast) var(--ease-out),
+              border-color var(--dur-fast) var(--ease-out),
+              color var(--dur-fast) var(--ease-out);
+}
+.botao--primario { background: var(--brand); color: var(--on-brand); box-shadow: var(--shadow-brand); }
+.botao--primario:hover { background: var(--brand-hover); }
+.botao--fantasma {
+  background: transparent;
+  color: rgba(255, 255, 255, 0.86);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+.botao--fantasma:hover { border-color: var(--teal-400); color: var(--teal-200); }
+.botao--icone { width: 38px; padding: 0; }
+.botao--bloco { width: 100%; height: 44px; }
+.botao:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Tela de entrada --------------------------------------------------------- */
+.entrada {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-6);
+  background: linear-gradient(160deg, var(--navy-800) 0%, var(--navy-950) 100%);
+}
+.entrada-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.entrada-logo { height: 34px; width: auto; align-self: flex-start; }
+.entrada-texto { display: flex; flex-direction: column; gap: 6px; }
+.entrada-titulo {
+  margin: 0;
+  font: var(--fw-extra) 24px/1.15 var(--font-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+}
+.entrada-nota { margin: 0; font: var(--type-body-sm); color: var(--text-muted); }
+.entrada-nota code {
+  font-family: var(--font-mono);
+  font-weight: var(--fw-semibold);
+  color: var(--text-body);
+}
+
+/* Campos ------------------------------------------------------------------ */
+.campo { display: flex; flex-direction: column; gap: 6px; }
+.campo-rotulo { font: var(--type-label); color: var(--text-body); }
+.campo-controle {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 var(--space-3);
+  background: var(--surface-card);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+.campo-controle:focus-within { border-color: var(--accent); box-shadow: var(--ring-brand); }
+.campo-controle input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font: var(--fw-regular) var(--text-sm)/1.4 var(--font-body);
+  color: var(--text-strong);
+}
+.campo.com-erro .campo-controle { border-color: var(--negative-500); box-shadow: var(--ring-error); }
+.campo-erro { font: var(--text-xs)/1.4 var(--font-body); color: var(--negative-600); }
+
+/* Topo -------------------------------------------------------------------- */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--navy-950);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+.topo-interno {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+.topo-marca { display: flex; align-items: center; gap: var(--space-4); }
+.topo-logo { height: 28px; width: auto; display: block; }
+.topo-titulos { display: flex; flex-direction: column; gap: 2px; }
+.topo-titulo {
+  margin: 0;
+  font: var(--fw-bold) var(--text-md)/1.2 var(--font-display);
+  letter-spacing: var(--tracking-snug);
+  color: var(--neutral-0);
+}
+.topo-subtitulo { margin: 0; font: var(--text-xs)/1.3 var(--font-body); color: rgba(255, 255, 255, 0.60); }
+.topo-acoes { display: flex; align-items: center; gap: 10px; }
+
+/* Painel ------------------------------------------------------------------ */
+.painel {
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-12);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+/* Sem isto, a tabela larga estica o cartão e a página inteira ganha rolagem
+   lateral no celular — a rolagem tem que ficar dentro da tabela. */
+.painel > * { min-width: 0; max-width: 100%; }
+
+.aviso {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--negative-50);
+  border: 1px solid var(--red-200);
+  color: var(--negative-700);
+}
+.aviso p { margin: 0; font: var(--type-body-sm); }
+
+/* Indicadores — o número é a informação, não precisa de gráfico */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+}
+.indicador {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-shadow: var(--shadow-xs);
+}
+.indicador--destaque { border-color: var(--navy-200); background: var(--navy-50); }
+.indicador-rotulo {
+  font: var(--fw-semibold) var(--text-xs)/1.3 var(--font-body);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.indicador-valor {
+  font: var(--fw-extra) 34px/1.05 var(--font-display);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+.indicador--destaque .indicador-valor { color: var(--navy-800); }
+.indicador-nota { font: var(--text-xs)/1.4 var(--font-body); color: var(--text-muted); }
+
+/* Distribuições — uma série só por gráfico, então um tom só de barra */
+.distribuicoes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+.cartao {
+  background: var(--surface-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-xs);
+}
+.cartao-titulo {
+  margin: 0 0 var(--space-4);
+  font: var(--fw-bold) var(--text-base)/1.3 var(--font-display);
+  letter-spacing: var(--tracking-snug);
+  color: var(--text-strong);
+}
+.barras { display: flex; flex-direction: column; gap: var(--space-3); }
+.barra { display: grid; grid-template-columns: 148px 1fr 44px; gap: var(--space-3); align-items: center; }
+.barra-rotulo {
+  font: var(--fw-medium) var(--text-sm)/1.3 var(--font-body);
+  color: var(--text-body);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.barra-trilha {
+  display: block;          /* span é inline por padrão: sem isso a altura não vale */
+  height: 8px;
+  border-radius: var(--radius-xs);
+  background: var(--neutral-100);
+  overflow: hidden;
+}
+.barra-preenchimento {
+  display: block;
+  height: 100%;
+  min-width: 3px;          /* uma inscrição só ainda precisa aparecer */
+  border-radius: var(--radius-xs);
+  background: var(--navy-600);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.barra-valor {
+  font: var(--fw-bold) var(--text-sm)/1 var(--font-body);
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.barras-vazio { font: var(--type-body-sm); color: var(--text-muted); }
+
+/* Lista ------------------------------------------------------------------- */
+.lista { padding: 0; overflow: hidden; }
+.lista-cabecalho {
+  padding: var(--space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.lista .cartao-titulo { margin: 0; }
+.lista-ferramentas { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.lista-ferramentas .botao--fantasma { color: var(--text-body); border-color: var(--border-default); }
+.lista-ferramentas .botao--fantasma:hover { border-color: var(--accent); color: var(--accent); }
+
+.busca { position: relative; display: flex; align-items: center; }
+.busca-icone { position: absolute; left: 12px; color: var(--text-subtle); pointer-events: none; }
+.busca input {
+  height: 38px;
+  width: 280px;
+  max-width: 100%;
+  padding: 0 var(--space-3) 0 36px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  outline: none;
+  background: var(--surface-card);
+  font: var(--fw-regular) var(--text-sm)/1 var(--font-body);
+  color: var(--text-strong);
+}
+.busca input:focus { border-color: var(--accent); box-shadow: var(--ring-brand); }
+
+.tabela-rolagem { overflow-x: auto; }
+.tabela { width: 100%; border-collapse: collapse; }
+/* position:relative aqui não é enfeite: sem um ancestral posicionado, o
+   .oculto-visual dentro do th se ancora na página inteira e faz a tela do
+   celular rolar de lado. */
+.tabela th {
+  position: relative;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-sunken);
+  border-bottom: 1px solid var(--border-subtle);
+  font: var(--fw-semibold) var(--text-xs)/1.3 var(--font-body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.tabela td {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  font: var(--fw-regular) var(--text-sm)/1.4 var(--font-body);
+  color: var(--text-body);
+  vertical-align: middle;
+}
+.tabela tr:last-child td { border-bottom: none; }
+.tabela tbody tr:hover { background: var(--neutral-25); }
+.celula-id, .celula-data { font-variant-numeric: tabular-nums; color: var(--text-muted); white-space: nowrap; }
+.celula-nome { font-weight: var(--fw-semibold); color: var(--text-strong); }
+.celula-contato { display: flex; flex-direction: column; gap: 2px; }
+.contato-zap {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--positive-600);
+  font-weight: var(--fw-medium);
+  font-variant-numeric: tabular-nums;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.contato-zap:hover { text-decoration: underline; }
+.contato-email { color: var(--text-muted); text-decoration: none; }
+.contato-email:hover { color: var(--accent); text-decoration: underline; }
+
+.etiqueta {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: var(--radius-pill);
+  font: var(--fw-semibold) var(--text-xs)/1 var(--font-body);
+  white-space: nowrap;
+}
+.etiqueta--simples { background: var(--teal-50); color: var(--teal-700); }
+.etiqueta--neutra { background: var(--neutral-100); color: var(--text-muted); }
+.etiqueta--sim { background: var(--positive-50); color: var(--positive-700); }
+.etiqueta--nao { background: var(--neutral-100); color: var(--text-subtle); }
+
+.botao-apagar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-subtle);
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.botao-apagar:hover { background: var(--negative-50); color: var(--negative-600); border-color: var(--red-200); }
+
+.vazio { margin: 0; padding: var(--space-8); text-align: center; font: var(--type-body); color: var(--text-muted); }
+
+.rodape-nota { margin: 0; font: var(--text-xs)/1.4 var(--font-body); color: var(--text-subtle); text-align: right; }
+
+/* Responsivo -------------------------------------------------------------- */
+@media (max-width: 1080px) {
+  .indicadores { grid-template-columns: repeat(2, 1fr); }
+  .distribuicoes { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 680px) {
+  .container { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .topo-interno { gap: var(--space-3); }
+  .topo-acoes { width: 100%; }
+  .topo-acoes .botao { flex: 1; }
+  .topo-acoes .botao--icone { flex: 0 0 38px; }
+  .indicadores { grid-template-columns: 1fr; }
+  .indicador { padding: var(--space-4); }
+  .indicador-valor { font-size: 28px; }
+  .barra { grid-template-columns: 110px 1fr 36px; }
+  .busca input { width: 100%; }
+  .lista-ferramentas { width: 100%; }
+  .busca { flex: 1; }
+
+  /* No celular, cada inscrito vira um cartão: o contato fica à mão sem
+     precisar rolar a tabela de lado — é como você vai usar na porta. */
+  .tabela, .tabela tbody { display: block; }
+  .tabela thead { display: none; }
+  .tabela-rolagem { overflow-x: visible; }
+
+  .tabela tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 10px;
+    padding: var(--space-4);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .tabela tr:hover { background: transparent; }
+  .tabela td { display: block; padding: 0; border: none; }
+
+  .celula-nome { order: 1; flex: 1 1 auto; font-size: var(--text-base); }
+  .celula-id { order: 2; margin-left: auto; font-size: var(--text-xs); }
+  .celula-acoes { order: 3; }
+  .celula-empresa { order: 4; flex: 1 1 100%; color: var(--text-muted); margin-top: -4px; }
+  .celula-contato-td { order: 5; flex: 1 1 100%; }
+  .celula-contato { flex-direction: row; flex-wrap: wrap; gap: 4px 16px; }
+  .contato-zap { font-size: var(--text-base); }
+  .celula-regime { order: 6; }
+  .celula-setor { order: 7; font-size: var(--text-xs); color: var(--text-muted); }
+  .celula-kit { order: 8; }
+  /* A data é a informação menos urgente do cartão: vai por último. */
+  .celula-data { order: 9; flex: 1 1 100%; font-size: var(--text-xs); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; }
+}

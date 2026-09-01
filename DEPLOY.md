@@ -121,15 +121,32 @@ container continua rodando.
 
 ## Ver e baixar os inscritos
 
-**Pelo navegador (o jeito do dia a dia).** Abra, trocando pelo seu domínio e
-pelo `TOKEN_ADMIN` do `.env`:
+**A página de inscritos** — é por aqui no dia a dia:
+
+```
+https://palestra.seudominio.com.br/admin.html
+```
+
+Pede a senha (o `TOKEN_ADMIN` do `.env`) e mostra: total de inscritos, quantos
+chegaram nas últimas 24h, quantos são do Simples Nacional, quantos querem o
+kit, a distribuição por regime e por setor, e a lista completa com busca.
+
+No celular cada inscrito vira um cartão, com o número já clicável para abrir o
+WhatsApp — dá para conferir presença na porta do evento pelo telefone. Tem
+ainda o botão **Copiar e-mails** (respeita a busca, então dá para copiar só um
+recorte) e o botão de apagar, para tirar da lista os seus testes.
+
+A página atualiza sozinha a cada minuto. A senha fica guardada só na aba: ao
+fechar o navegador, ela é pedida de novo.
+
+**Baixar em CSV.** Pelo botão da página, ou direto:
 
 ```
 https://palestra.seudominio.com.br/api/inscricoes.csv?token=SEU-TOKEN
 ```
 
 Baixa um CSV que o Excel abre com dois cliques — separador `;` e acentuação
-correta. Guarde esse link nos favoritos do celular: é a sua lista de presença.
+correta.
 
 **Pelo terminal, se quiser consultar na hora:**
 

@@ -14,6 +14,7 @@ import csv
 import io
 import os
 import re
+import secrets
 import sqlite3
 import unicodedata
 from datetime import datetime, timedelta, timezone
@@ -205,12 +206,89 @@ ROTULOS_SETOR = {
 }
 
 
+def token_confere():
+    """Compara em tempo constante: comparação normal vaza o token aos poucos."""
+    if not TOKEN_ADMIN:
+        return False
+    enviado = request.args.get("token", "") or request.headers.get("X-Token", "")
+    return secrets.compare_digest(enviado, TOKEN_ADMIN)
+
+
+def negar():
+    if not TOKEN_ADMIN:
+        return jsonify({"ok": False, "erro": "Área restrita desativada: defina TOKEN_ADMIN."}), 403
+    return jsonify({"ok": False, "erro": "Senha inválida."}), 403
+
+
+def contar(linhas, campo, rotulos):
+    """Distribuição por categoria, da mais frequente para a menos."""
+    totais = {}
+    for linha in linhas:
+        codigo = linha[campo] or ""
+        totais[codigo] = totais.get(codigo, 0) + 1
+    itens = [
+        {"codigo": c, "rotulo": rotulos.get(c, "Não informado"), "total": n}
+        for c, n in totais.items()
+    ]
+    itens.sort(key=lambda i: (-i["total"], i["rotulo"]))
+    return itens
+
+
+@app.get("/inscricoes.json")
+def listar_json():
+    """Alimenta a página /admin.html."""
+    if not token_confere():
+        return negar()
+
+    linhas = conectar().execute("SELECT * FROM inscricoes ORDER BY id DESC").fetchall()
+    agora = datetime.now(FUSO)
+    limite_24h = (agora - timedelta(hours=24)).isoformat()
+
+    inscricoes = [{
+        "id": l["id"],
+        "criadoEm": l["criado_em"],
+        "nome": l["nome"],
+        "whatsapp": l["whatsapp"],
+        "whatsappDigitos": l["whatsapp_digitos"],
+        "email": l["email"],
+        "empresa": l["empresa"] or "",
+        "regime": ROTULOS_REGIME.get(l["regime"], ""),
+        "setor": ROTULOS_SETOR.get(l["setor"], ""),
+        "querKit": bool(l["quer_kit"]),
+    } for l in linhas]
+
+    return jsonify({
+        "ok": True,
+        "resumo": {
+            "total": len(linhas),
+            "querKit": sum(1 for l in linhas if l["quer_kit"]),
+            "simples": sum(1 for l in linhas if l["regime"] == "simples"),
+            "ultimas24h": sum(1 for l in linhas if l["criado_em"] >= limite_24h),
+        },
+        "porRegime": contar(linhas, "regime", ROTULOS_REGIME),
+        "porSetor": contar(linhas, "setor", ROTULOS_SETOR),
+        "inscricoes": inscricoes,
+    })
+
+
+@app.delete("/inscricoes/<int:inscricao_id>")
+def apagar_inscricao(inscricao_id):
+    """Para tirar da lista um teste seu ou um cadastro claramente falso."""
+    if not token_confere():
+        return negar()
+
+    db = conectar()
+    cursor = db.execute("DELETE FROM inscricoes WHERE id = ?", (inscricao_id,))
+    db.commit()
+    if cursor.rowcount == 0:
+        return jsonify({"ok": False, "erro": "Inscrição não encontrada."}), 404
+    return jsonify({"ok": True})
+
+
 @app.get("/inscricoes.csv")
 def exportar_csv():
-    if not TOKEN_ADMIN:
-        return jsonify({"ok": False, "erro": "Exportação desativada: defina TOKEN_ADMIN."}), 403
-    if request.args.get("token", "") != TOKEN_ADMIN:
-        return jsonify({"ok": False, "erro": "Token inválido."}), 403
+    if not token_confere():
+        return negar()
 
     linhas = conectar().execute(
         "SELECT * FROM inscricoes ORDER BY id"

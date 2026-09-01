@@ -52,6 +52,18 @@ cd site && python3 -m http.server 8000
 # abra http://localhost:8000
 ```
 
+## A página de inscritos
+
+`admin.html` é o painel onde você acompanha as inscrições: indicadores, a
+distribuição por regime e setor, e a lista com busca, link de WhatsApp por
+inscrito, cópia de e-mails e remoção de cadastro. Abre em
+`https://SEU-DOMINIO/admin.html` e pede a senha (o `TOKEN_ADMIN` do servidor),
+que fica guardada só naquela aba.
+
+A página em si não tem segredo nenhum — quem protege os dados é a API, que só
+responde com o token certo. Mesmo assim ela sai do Google: tem `noindex` e está
+bloqueada no `robots.txt`.
+
 ## Para onde vai a inscrição
 
 Três destinos, tentados nesta ordem — o primeiro que funcionar confirma:

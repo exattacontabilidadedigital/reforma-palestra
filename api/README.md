@@ -9,11 +9,18 @@ aqui através de `/api/` no domínio do site.
 | Método | Rota | O que faz |
 |---|---|---|
 | `POST` | `/inscricoes` | Grava uma inscrição. Aceita JSON ou formulário. |
-| `GET` | `/inscricoes.csv?token=…` | Exporta tudo em CSV (exige `TOKEN_ADMIN`). |
+| `GET` | `/inscricoes.json?token=…` | Lista + resumo. Alimenta a página `/admin.html`. |
+| `GET` | `/inscricoes.csv?token=…` | Exporta tudo em CSV. |
+| `DELETE` | `/inscricoes/<id>?token=…` | Apaga uma inscrição (teste seu ou cadastro falso). |
 | `GET` | `/health` | Usado pelo healthcheck do Docker. Devolve o total. |
 
-Pelo domínio, essas rotas ficam em `/api/inscricoes`, `/api/inscricoes.csv` e
-`/api/health` — o Caddy corta o prefixo `/api` antes de encaminhar.
+Pelo domínio, essas rotas ficam sob `/api/` — o Caddy corta o prefixo antes de
+encaminhar. As rotas com `token` exigem o `TOKEN_ADMIN`; sem ele configurado,
+respondem `403` e a área restrita fica desligada.
+
+A comparação do token é feita com `secrets.compare_digest`: comparação comum
+termina no primeiro caractere diferente, e esse tempo a mais entrega o token
+aos poucos para quem estiver medindo.
 
 ### Respostas do `POST /inscricoes`
 
