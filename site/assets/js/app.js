@@ -164,6 +164,23 @@
            '?text=' + encodeURIComponent(mensagemWhats(dados));
   }
 
+  /* Abre o WhatsApp em outra aba. Se o bloqueador de pop-up barrar o
+     window.open, tenta de novo com um link clicado — é o caminho que os
+     bloqueadores costumam deixar passar. */
+  function abrirWhats(dados) {
+    var url = linkWhats(dados);
+    var aba = null;
+    try { aba = window.open(url, '_blank', 'noopener'); } catch (ignorado) {}
+    if (aba) return;
+    var link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
   function carregando(ativo) {
     botao.disabled = ativo;
     botao.innerHTML = ativo
@@ -216,7 +233,7 @@
 
     /* Sem endpoint configurado: manda pelo WhatsApp e confirma. */
     if (!CFG.ENDPOINT_PLANILHA) {
-      window.open(linkWhats(dados), '_blank', 'noopener');
+      abrirWhats(dados);
       confirmar();
       return;
     }
