@@ -27,11 +27,13 @@ site/
 
 ## Como publicar
 
-Qualquer hospedagem de arquivos estáticos serve. As duas mais rápidas:
+A publicação é no **VPS da Hostinger com Docker** — um container Caddy servindo
+esta pasta, com HTTPS automático. O passo a passo está em
+[`../DEPLOY.md`](../DEPLOY.md).
 
-- **Netlify Drop** — arraste a pasta `site/` em <https://app.netlify.com/drop>.
-  Fica no ar em segundos, com HTTPS.
-- **Vercel / GitHub Pages / hospedagem própria** — aponte a raiz para `site/`.
+Depois de publicado, atualizar a página é só `git pull` no VPS: a pasta `site/`
+é montada dentro do container, então o conteúdo novo entra no ar na hora, sem
+reiniciar nada.
 
 Para testar na sua máquina antes:
 

@@ -1,0 +1,43 @@
+# Landing page da palestra — Hostinger VPS.
+#
+#   cp .env.example .env   (e preencha DOMINIO e EMAIL_TLS)
+#   docker compose up -d
+#
+# A pasta site/ é montada dentro do container, então "git pull" já atualiza a
+# página no ar: não precisa reiniciar nem reconstruir nada.
+
+services:
+  site:
+    image: caddy:2-alpine
+    container_name: palestra-site
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+
+    env_file: .env
+
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./site:/srv:ro
+      - caddy_data:/data      # certificados — NÃO apague, senão reemite tudo
+      - caddy_config:/config
+
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--spider", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  caddy_data:
+  caddy_config:

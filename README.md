@@ -1,7 +1,12 @@
 > **Implementação pronta:** a landing page de inscrições está em
-> [`site/`](./site/) — site estático, sem build. Comece por
-> [`site/README.md`](./site/README.md) para publicar e para ligar o formulário
-> à planilha do Google.
+> [`site/`](./site/) — site estático, sem build.
+>
+> - **[`DEPLOY.md`](./DEPLOY.md)** — publicar no VPS da Hostinger com Docker
+>   (Caddy, HTTPS automático)
+> - **[`site/apps-script/README.md`](./site/apps-script/README.md)** — ligar o
+>   formulário à planilha do Google
+> - **[`site/README.md`](./site/README.md)** — estrutura dos arquivos e o que
+>   dá para ajustar sem mexer em código
 >
 > O restante deste arquivo é o texto original do handoff do Claude Design.
 

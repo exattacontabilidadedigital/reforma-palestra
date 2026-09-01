@@ -1,0 +1,53 @@
+# Caddy — servidor da landing page da palestra.
+# O certificado HTTPS é emitido e renovado sozinho pelo Let's Encrypt:
+# basta o domínio de DOMINIO apontar para o IP do VPS e as portas 80 e 443
+# estarem livres. Não há nada de certificado para configurar aqui.
+{
+	# E-mail usado pelo Let's Encrypt para avisar sobre expiração.
+	email {$EMAIL_TLS}
+}
+
+{$DOMINIO} {
+	root * /srv
+	encode zstd gzip
+	file_server
+
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+	}
+
+	# Imagens, ícones e tokens do design system quase não mudam: cache de 30 dias.
+	@estaticos path /assets/img/* /assets/css/tokens/*
+	header @estaticos Cache-Control "public, max-age=2592000"
+
+	# HTML, CSS e JS revalidam a cada visita. Isso é o que faz uma alteração no
+	# config.js (a URL da planilha, por exemplo) chegar na hora a quem já visitou
+	# a página, em vez de ficar presa no cache do navegador.
+	@volateis path *.html *.css *.js /
+	header @volateis Cache-Control "no-cache"
+
+	# Erro 404 cai na própria landing page — link torto ainda leva à inscrição.
+	handle_errors {
+		@notfound expression {err.status_code} == 404
+		rewrite @notfound /index.html
+		file_server
+	}
+}
+
+# Redireciona o www para o domínio principal.
+# Só descomente DEPOIS de criar o registro DNS de www apontando para o mesmo IP —
+# sem o DNS, o Caddy fica tentando emitir um certificado que nunca sai.
+# www.{$DOMINIO} {
+# 	redir https://{$DOMINIO}{uri} permanent
+# }
+
+# Porta interna usada só pelo healthcheck do Docker. Não fica exposta na internet.
+:8080 {
+	respond /health "ok" 200
+	respond 404
+}
