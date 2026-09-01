@@ -269,3 +269,29 @@ vez. Para parar tudo sem perder nada, use `docker compose down` sem o `-v`.
 Se quiser que `www.palestra.seudominio.com.br` também funcione: crie o registro
 DNS do `www` apontando para o mesmo IP e só então descomente o bloco `www.` no
 final do `Caddyfile`. Depois, `docker compose restart`.
+
+---
+
+## Alternativa: colar no editor .yaml do Docker Manager
+
+Se você preferir não usar o terminal, existe o arquivo
+[`docker-compose.painel.yml`](./docker-compose.painel.yml), feito para o editor
+.yaml do hPanel.
+
+A diferença: nele nada depende de arquivos no disco do VPS — cada container
+clona o repositório ao subir. É por isso que dá para colar o conteúdo no painel
+e implantar, sem `git clone` e sem terminal.
+
+**Pré-requisito:** o repositório precisa estar público, senão os containers não
+conseguem clonar.
+
+**Antes de colar, troque duas linhas:** `DOMINIO` e `TOKEN_ADMIN`.
+
+**Para atualizar depois de um push:** recrie os containers no painel. Só
+reiniciar não basta — a cópia do código é feita no momento em que o container
+sobe, então ele precisa ser recriado para clonar de novo.
+
+**O que se perde nesse caminho:** o `git pull` que publicava na hora deixa de
+existir, a subida fica mais lenta (cada container instala o que precisa antes
+de iniciar) e uma queda do GitHub ou do PyPI impede os containers de subir. Por
+isso o caminho por SSH continua sendo o recomendado.

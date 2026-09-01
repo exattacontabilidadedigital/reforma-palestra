@@ -1,0 +1,84 @@
+# =============================================================================
+# Versão para o EDITOR .YAML do Docker Manager (hPanel da Hostinger).
+#
+# Diferença para o docker-compose.yml normal: aqui nada depende de arquivos no
+# disco do VPS. Cada container busca o código do repositório ao subir, então
+# dá para colar este arquivo no painel e pronto — sem terminal, sem git clone.
+#
+# ANTES DE COLAR, troque as duas linhas marcadas com "TROQUE":
+#   1. DOMINIO
+#   2. TOKEN_ADMIN
+#
+# PRÉ-REQUISITO: o repositório precisa estar PÚBLICO (os containers clonam sem
+# credencial). Se ainda estiver privado: GitHub → Settings → Danger Zone →
+# Change visibility → Public.
+#
+# Para atualizar a página depois de um push: no painel, recrie os containers
+# (Restart não basta — precisa recriar, para clonar de novo).
+# =============================================================================
+
+services:
+  site:
+    image: caddy:2-alpine
+    restart: unless-stopped
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+
+    environment:
+      # TROQUE: o domínio que aponta para o IP do VPS, sem http:// e sem barra.
+      # Para testar por IP antes de ter DNS, deixe exatamente  :80
+      DOMINIO: ":80"
+
+    volumes:
+      - caddy_data:/data      # certificados — não apague
+      - caddy_config:/config
+
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        apk add --no-cache git
+        rm -rf /tmp/repo
+        git clone --depth 1 https://github.com/exattacontabilidadedigital/reforma-palestra.git /tmp/repo
+        rm -rf /srv
+        cp -r /tmp/repo/site /srv
+        cp /tmp/repo/Caddyfile /etc/caddy/Caddyfile
+        exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile
+
+  api:
+    image: python:3.12-alpine
+    restart: unless-stopped
+
+    expose:
+      - "3000"
+
+    environment:
+      BANCO: /data/inscricoes.db
+      # TROQUE: a senha da página de inscritos (/admin.html).
+      # Gere uma aleatória e guarde: openssl rand -hex 24
+      TOKEN_ADMIN: "troque-por-uma-senha-longa-e-aleatoria"
+
+    volumes:
+      - inscricoes:/data      # o banco de inscrições vive aqui
+
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        apk add --no-cache git
+        rm -rf /tmp/repo
+        git clone --depth 1 https://github.com/exattacontabilidadedigital/reforma-palestra.git /tmp/repo
+        pip install --no-cache-dir -r /tmp/repo/api/requirements.txt
+        cd /tmp/repo/api
+        exec gunicorn --bind 0.0.0.0:3000 --workers 2 --threads 4 \
+             --access-logfile - --error-logfile - app:app
+
+volumes:
+  caddy_data:
+  caddy_config:
+  inscricoes:
