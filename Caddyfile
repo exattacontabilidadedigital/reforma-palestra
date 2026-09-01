@@ -10,7 +10,6 @@
 {$DOMINIO} {
 	root * /srv
 	encode zstd gzip
-	file_server
 
 	header {
 		-Server
@@ -21,15 +20,27 @@
 		Permissions-Policy "geolocation=(), microphone=(), camera=()"
 	}
 
-	# Imagens, ícones e tokens do design system quase não mudam: cache de 30 dias.
-	@estaticos path /assets/img/* /assets/css/tokens/*
-	header @estaticos Cache-Control "public, max-age=2592000"
+	# Inscrições: vão para a API, que grava no banco SQLite. O handle_path
+	# corta o prefixo, então /api/inscricoes chega na API como /inscricoes.
+	# O serviço não tem porta publicada — só é alcançável por aqui.
+	handle_path /api/* {
+		reverse_proxy api:3000
+	}
 
-	# HTML, CSS e JS revalidam a cada visita. Isso é o que faz uma alteração no
-	# config.js (a URL da planilha, por exemplo) chegar na hora a quem já visitou
-	# a página, em vez de ficar presa no cache do navegador.
-	@volateis path *.html *.css *.js /
-	header @volateis Cache-Control "no-cache"
+	# Todo o resto é arquivo da pasta site/.
+	handle {
+		# Imagens, ícones e tokens do design system quase não mudam: 30 dias.
+		@estaticos path /assets/img/* /assets/css/tokens/*
+		header @estaticos Cache-Control "public, max-age=2592000"
+
+		# HTML, CSS e JS revalidam a cada visita. Isso é o que faz uma alteração
+		# no config.js chegar na hora a quem já visitou a página, em vez de
+		# ficar presa no cache do navegador.
+		@volateis path *.html *.css *.js /
+		header @volateis Cache-Control "no-cache"
+
+		file_server
+	}
 
 	# Erro 404 cai na própria landing page — link torto ainda leva à inscrição.
 	handle_errors {

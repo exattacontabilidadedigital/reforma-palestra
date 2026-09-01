@@ -2,11 +2,13 @@
 > [`site/`](./site/) — site estático, sem build.
 >
 > - **[`DEPLOY.md`](./DEPLOY.md)** — publicar no VPS da Hostinger com Docker
->   (Caddy, HTTPS automático)
-> - **[`site/apps-script/README.md`](./site/apps-script/README.md)** — ligar o
->   formulário à planilha do Google
+>   (Caddy com HTTPS automático + API), e como baixar a lista de inscritos
+> - **[`api/README.md`](./api/README.md)** — a API que grava as inscrições no
+>   banco SQLite
 > - **[`site/README.md`](./site/README.md)** — estrutura dos arquivos e o que
 >   dá para ajustar sem mexer em código
+> - **[`site/apps-script/README.md`](./site/apps-script/README.md)** — opcional:
+>   copiar as inscrições também para uma planilha do Google
 >
 > O restante deste arquivo é o texto original do handoff do Claude Design.
 

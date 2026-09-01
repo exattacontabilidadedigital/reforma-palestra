@@ -323,6 +323,16 @@ img { max-width: 100%; }
 }
 .field-error[hidden] { display: none; }
 
+/* Campo isca do anti-spam: fora da tela, fora da navegação por teclado e
+   fora do leitor de tela. Não usar display:none — robô ignora campo oculto. */
+.isca {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .checkbox {
   display: flex;
   gap: 10px;

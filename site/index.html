@@ -169,6 +169,13 @@
                 </div>
               </div>
 
+              <!-- Campo isca: invisível para gente, irresistível para robô de spam.
+                   Se vier preenchido, a inscrição é descartada no servidor. -->
+              <div class="isca" aria-hidden="true">
+                <label for="website">Não preencha este campo</label>
+                <input id="website" name="website" type="text" tabindex="-1" autocomplete="off">
+              </div>
+
               <label class="checkbox" for="kit">
                 <span class="checkbox-box">
                   <input id="kit" name="kit" type="checkbox" checked>

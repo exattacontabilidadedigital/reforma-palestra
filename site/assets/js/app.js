@@ -129,16 +129,33 @@
     agro: 'Agronegócio', transporte: 'Transporte e logística', outro: 'Outro'
   };
 
+  /* Valores crus, como estão no formulário — é o que a API espera. */
   function coletar() {
     return {
       nome: document.getElementById('nome').value.trim(),
       whatsapp: document.getElementById('whats').value.trim(),
       email: document.getElementById('email').value.trim(),
       empresa: document.getElementById('empresa').value.trim(),
-      regime: ROTULO_REGIME[document.getElementById('regime').value] || '',
-      setor: ROTULO_SETOR[document.getElementById('setor').value] || '',
-      kit: document.getElementById('kit').checked ? 'Sim' : 'Não',
-      origem: window.location.href,
+      regime: document.getElementById('regime').value,
+      setor: document.getElementById('setor').value,
+      kit: document.getElementById('kit').checked ? '1' : '0',
+      website: document.getElementById('website').value,
+      origem: window.location.href
+    };
+  }
+
+  /* Mesma inscrição com os rótulos por extenso — para a planilha e o WhatsApp,
+     que são lidos por gente, não por código. */
+  function comRotulos(dados) {
+    return {
+      nome: dados.nome,
+      whatsapp: dados.whatsapp,
+      email: dados.email,
+      empresa: dados.empresa,
+      regime: ROTULO_REGIME[dados.regime] || '',
+      setor: ROTULO_SETOR[dados.setor] || '',
+      kit: dados.kit === '1' ? 'Sim' : 'Não',
+      origem: dados.origem,
       enviadoEm: new Date().toISOString()
     };
   }
@@ -202,6 +219,27 @@
     document.getElementById('inscricao').scrollIntoView({ block: 'center' });
   }
 
+  /* Envia para a API do próprio servidor, que grava no banco SQLite.
+     Mesma origem da página: sem CORS, e a resposta pode ser lida de verdade —
+     é por isso que aqui dá para devolver erro campo a campo. */
+  function enviarParaApi(dados) {
+    return fetch(CFG.ENDPOINT_INSCRICAO, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (json) {
+        if (r.status === 422 && json.erros) {
+          var e = new Error('validacao');
+          e.erros = json.erros;
+          throw e;
+        }
+        if (!r.ok || json.ok === false) throw new Error('HTTP ' + r.status);
+        return true;
+      });
+    });
+  }
+
   /* Envia para o app da web do Apps Script.
      Corpo em application/x-www-form-urlencoded para evitar preflight CORS.
      Se a leitura da resposta falhar (CORS/rede), tenta uma segunda vez em
@@ -224,27 +262,66 @@
       });
   }
 
+  /* Erros que a API devolveu (422) viram marcação nos campos, como se a
+     validação tivesse acontecido aqui. */
+  function aplicarErrosDaApi(erros) {
+    var primeiro = null;
+    var mapa = { nome: 'nome', whatsapp: 'whats', email: 'email' };
+    Object.keys(erros).forEach(function (chave) {
+      var id = mapa[chave];
+      if (!id) return;
+      marcarErro(id, erros[chave]);
+      if (!primeiro) primeiro = document.getElementById(id);
+    });
+    if (primeiro) primeiro.focus();
+  }
+
+  /* Ordem de tentativa: API (banco SQLite) → planilha → WhatsApp.
+     Com a API no ar e a planilha também configurada, a planilha recebe uma
+     cópia sem segurar a confirmação: se ela falhar, a inscrição já está
+     salva no banco e nada muda para quem se inscreveu. */
+  function enviar(dados, rotulados) {
+    if (CFG.ENDPOINT_INSCRICAO) {
+      return enviarParaApi(dados).then(function () {
+        if (CFG.ENDPOINT_PLANILHA) {
+          enviarParaPlanilha(rotulados).catch(function () {});
+        }
+        return true;
+      }).catch(function (erro) {
+        if (erro && erro.erros) throw erro;
+        if (CFG.ENDPOINT_PLANILHA) return enviarParaPlanilha(rotulados);
+        throw erro;
+      });
+    }
+    return enviarParaPlanilha(rotulados);
+  }
+
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     alerta.hidden = true;
     if (!validar()) return;
 
     var dados = coletar();
+    var rotulados = comRotulos(dados);
 
-    /* Sem endpoint configurado: manda pelo WhatsApp e confirma. */
-    if (!CFG.ENDPOINT_PLANILHA) {
-      abrirWhats(dados);
+    /* Nenhum destino configurado: manda pelo WhatsApp e confirma. */
+    if (!CFG.ENDPOINT_INSCRICAO && !CFG.ENDPOINT_PLANILHA) {
+      abrirWhats(rotulados);
       confirmar();
       return;
     }
 
     carregando(true);
-    enviarParaPlanilha(dados)
+    enviar(dados, rotulados)
       .then(confirmar)
-      .catch(function () {
+      .catch(function (erro) {
+        if (erro && erro.erros) {
+          aplicarErrosDaApi(erro.erros);
+          return;
+        }
         mostrarAlerta(
           'Não conseguimos registrar sua inscrição agora. Tente de novo em instantes ou envie pelo WhatsApp — a gente confirma na hora.',
-          dados
+          rotulados
         );
       })
       .then(function () { carregando(false); });

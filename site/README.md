@@ -38,27 +38,46 @@ reiniciar nada.
 Para testar na sua máquina antes:
 
 ```bash
+cd .. && docker compose up --build
+# abra http://localhost   (o Caddy tenta HTTPS no domínio do .env; para testar
+#                          local, coloque DOMINIO=:80 no .env)
+```
+
+Para olhar só o visual, sem banco nem Docker, um servidor estático resolve. Aí
+o envio mostra o aviso de falha com o botão do WhatsApp, porque a API não
+existe nesse modo:
+
+```bash
 cd site && python3 -m http.server 8000
 # abra http://localhost:8000
 ```
 
-## Ligar o formulário à planilha
+## Para onde vai a inscrição
 
-O formulário grava cada inscrição numa planilha do Google via Apps Script.
-O passo a passo está em [`apps-script/README.md`](./apps-script/README.md) —
-no fim você cola a URL em `assets/js/config.js`:
+Três destinos, tentados nesta ordem — o primeiro que funcionar confirma:
 
-```js
-ENDPOINT_PLANILHA: 'https://script.google.com/macros/s/AKfycb.../exec',
-```
+1. **Banco SQLite** (o padrão) — a API em [`../api/`](../api/) grava no
+   `/data/inscricoes.db`, dentro do VPS. Configurado em `config.js` como
+   `ENDPOINT_INSCRICAO: '/api/inscricoes'`. Para ver a lista, veja
+   *Ver e baixar os inscritos* no [`../DEPLOY.md`](../DEPLOY.md).
+2. **Planilha do Google** (opcional) — se você preencher `ENDPOINT_PLANILHA`,
+   cada inscrição também é copiada para uma planilha, útil para acompanhar pelo
+   celular sem entrar no VPS. Passo a passo em
+   [`apps-script/README.md`](./apps-script/README.md). Se a planilha falhar, não
+   atrapalha: a inscrição já está no banco.
+3. **WhatsApp** — entra sozinho quando os dois de cima falham ou estão vazios.
+   A página monta a mensagem com os dados preenchidos e abre o `wa.me`.
 
-**Enquanto essa URL estiver vazia**, o botão continua funcionando: valida os
-campos e abre o WhatsApp com a mensagem de inscrição já montada. Ninguém fica
-sem se inscrever enquanto você configura a planilha.
+Ou seja: **ninguém fica sem se inscrever**, nem se a API cair, nem enquanto
+você ainda está configurando as coisas.
 
-E mesmo com a planilha ligada, se a internet do inscrito falhar no momento do
-envio, a página mostra um aviso com o link do WhatsApp preenchido — a inscrição
-não se perde.
+### Anti-spam
+
+O formulário tem um campo isca invisível (`#website`). Gente não vê nem
+alcança pelo teclado; robô de spam preenche. Quando vem preenchido, o servidor
+descarta a inscrição respondendo como se tivesse dado certo — assim o robô não
+insiste. A API também ignora inscrições repetidas (mesmo e-mail ou mesmo
+WhatsApp) dentro de 10 minutos, o que cobre o duplo-clique no botão.
 
 ## O que dá para ajustar sem mexer em código
 
@@ -66,7 +85,8 @@ Tudo em `assets/js/config.js`:
 
 | Item | Campo |
 |---|---|
-| URL da planilha | `ENDPOINT_PLANILHA` |
+| Endereço da API que grava no banco | `ENDPOINT_INSCRICAO` |
+| URL da planilha (opcional) | `ENDPOINT_PLANILHA` |
 | Número do WhatsApp | `WHATSAPP` (só dígitos, com DDI e DDD) |
 | Data do contador regressivo | `PRAZO_DECISAO` |
 | Endereço completo da ACIA | `ENDERECO` (quando preenchido, aparece no card de Local) |

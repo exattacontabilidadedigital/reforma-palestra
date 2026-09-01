@@ -4,13 +4,19 @@
 
 window.CONFIG = {
 
-  /* URL do app da web publicado a partir do Google Apps Script.
-     Passo a passo em site/apps-script/README.md.
-     Enquanto estiver vazia, o formulário valida os campos e cai direto
-     no envio pelo WhatsApp (nada é perdido). */
+  /* Para onde vai a inscrição. Vazio = não usa.
+     A ordem de tentativa é: API → planilha → WhatsApp.
+
+     1) API com banco SQLite (o padrão, no mesmo VPS).
+        Deixe como está se você subiu com o docker-compose deste repositório. */
+  ENDPOINT_INSCRICAO: '/api/inscricoes',
+
+  /* 2) Planilha do Google (opcional). Se preenchido, a inscrição é enviada
+        TAMBÉM para a planilha — útil para acompanhar pelo celular sem entrar
+        no VPS. Passo a passo em site/apps-script/README.md. */
   ENDPOINT_PLANILHA: '',
 
-  /* WhatsApp de contato — só dígitos, com DDI e DDD. */
+  /* 3) WhatsApp: entra sozinho quando os dois acima falham ou estão vazios. */
   WHATSAPP: '5599991660824',
 
   /* Prazo do contador regressivo do hero (ano, mês-1, dia, hora, minuto). */
