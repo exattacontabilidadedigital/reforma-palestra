@@ -2,10 +2,12 @@
 # O certificado HTTPS é emitido e renovado sozinho pelo Let's Encrypt:
 # basta o domínio de DOMINIO apontar para o IP do VPS e as portas 80 e 443
 # estarem livres. Não há nada de certificado para configurar aqui.
-{
-	# E-mail usado pelo Let's Encrypt para avisar sobre expiração.
-	email {$EMAIL_TLS}
-}
+# Se quiser receber do Let's Encrypt os avisos de expiração, descomente as duas
+# linhas abaixo e ponha o seu e-mail. É opcional: o Caddy renova sozinho, e
+# deixar a variável vazia derruba o servidor na hora de subir.
+# {
+# 	email contato@exattacontabilidade.com.br
+# }
 
 {$DOMINIO} {
 	root * /srv

@@ -44,6 +44,29 @@ aceitando TCP 80 e TCP 443. Se o VPS também tiver `ufw` ligado por dentro:
 ufw allow 80/tcp && ufw allow 443/tcp
 ```
 
+## Antes: por que não dá para colar só o link do repositório
+
+O Docker Manager do hPanel tem a opção de subir um projeto a partir de uma URL
+de `docker-compose.yml`. **Para este projeto, essa opção sozinha não funciona** —
+e o motivo não é erro de configuração:
+
+O `docker-compose.yml` daqui não usa só imagens prontas. Ele **monta pastas do
+repositório dentro dos containers** (`./site`, `./Caddyfile`) e **constrói** a
+imagem da API a partir do `api/Dockerfile`. Ou seja: os arquivos do repositório
+precisam existir no disco do VPS. Buscar apenas o arquivo YAML não traz nada
+disso, e o container sobe vazio ou nem sobe.
+
+Some-se a isso o fato de o repositório ser **privado**: sem credencial, o painel
+nem consegue ler a URL.
+
+Então o caminho é clonar o repositório no VPS, por SSH — é o que os passos
+abaixo fazem. É mais simples do que parece: são quatro comandos.
+
+> Se você preferir mesmo usar o Docker Manager, o jeito é publicar as imagens
+> prontas num registro (Docker Hub) e trocar o `build:` por `image:`. Dá mais
+> trabalho de manter e não recomendo para uma página só — mas me peça que eu
+> preparo.
+
 ## 3. Entrar no VPS e conferir o Docker
 
 ```bash
@@ -98,7 +121,7 @@ Copie o resultado — vai em `TOKEN_ADMIN` no próximo passo.
 
 ```bash
 cp .env.example .env
-nano .env      # DOMINIO, EMAIL_TLS e TOKEN_ADMIN. Ctrl+O salva, Ctrl+X sai
+nano .env      # DOMINIO e TOKEN_ADMIN. Ctrl+O salva, Ctrl+X sai
 docker compose up -d --build
 ```
 

@@ -1,6 +1,6 @@
 # Landing page da palestra — Hostinger VPS.
 #
-#   cp .env.example .env   (e preencha DOMINIO, EMAIL_TLS e TOKEN_ADMIN)
+#   cp .env.example .env   (e preencha DOMINIO e TOKEN_ADMIN)
 #   docker compose up -d --build
 #
 # Dois containers:
@@ -23,7 +23,12 @@ services:
       - "443:443"
       - "443:443/udp"   # HTTP/3
 
-    env_file: .env
+    # Sem "env_file": ele exige que o arquivo exista e derruba o deploy quando
+    # o .env ainda não foi criado. O compose já lê o .env sozinho para
+    # substituir as variáveis abaixo — e, se não houver .env, dá para definir
+    # as mesmas variáveis no painel da Hostinger.
+    environment:
+      DOMINIO: ${DOMINIO:?defina DOMINIO (o dominio do site) no .env ou no painel}
 
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
