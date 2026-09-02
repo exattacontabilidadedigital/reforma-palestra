@@ -295,3 +295,52 @@ sobe, então ele precisa ser recriado para clonar de novo.
 existir, a subida fica mais lenta (cada container instala o que precisa antes
 de iniciar) e uma queda do GitHub ou do PyPI impede os containers de subir. Por
 isso o caminho por SSH continua sendo o recomendado.
+
+---
+
+## E-mails de confirmação e lembrete
+
+Tudo é configurado na aba **E-mails** da página `/admin.html` — nada de mexer
+em YAML ou variável de ambiente.
+
+### 1. Preparar o Resend
+
+1. Crie a conta em [resend.com](https://resend.com)
+2. **Domains → Add Domain** — informe o domínio de onde os e-mails vão sair
+3. O Resend mostra registros DNS (SPF/DKIM). Cadastre-os no painel do seu
+   domínio e espere a verificação ficar verde
+4. **API Keys → Create API Key** — copie a chave (começa com `re_`)
+
+Sem o domínio verificado, o Resend recusa o envio. Não dá para pular esse passo.
+
+### 2. Configurar na página
+
+Aba **E-mails**, preencha:
+
+| Campo | Valor |
+|---|---|
+| Servidor | `smtp.resend.com` |
+| Porta | `465` |
+| Usuário | `resend` |
+| Senha / API key | a chave `re_...` |
+| Enviar como | um endereço do domínio verificado |
+| Responder para | onde você quer receber as respostas |
+
+Salve e use **Testar confirmação** para mandar um e-mail de teste para você
+mesmo. Se der erro, a mensagem diz o motivo (login recusado, domínio não
+verificado, remetente inválido).
+
+### 3. No dia do evento
+
+Aba **E-mails** → **Enviar lembrete**. Ele vai só para quem ainda não recebeu,
+então clicar duas vezes não manda em dobro.
+
+### Editar os textos
+
+O assunto e o corpo dos dois e-mails são editáveis ali mesmo, em texto normal.
+As `{{variáveis}}` são trocadas pelos dados de cada inscrito — clique nelas
+para inserir onde o cursor estiver. Linha em branco separa parágrafo, e o
+layout com a marca é aplicado no envio.
+
+Se o SMTP não estiver configurado, nada quebra: a inscrição é gravada
+normalmente e apenas o e-mail deixa de sair.

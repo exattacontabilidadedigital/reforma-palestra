@@ -12,6 +12,10 @@ aqui através de `/api/` no domínio do site.
 | `GET` | `/inscricoes.json?token=…` | Lista + resumo. Alimenta a página `/admin.html`. |
 | `GET` | `/inscricoes.csv?token=…` | Exporta tudo em CSV. |
 | `DELETE` | `/inscricoes/<id>?token=…` | Apaga uma inscrição (teste seu ou cadastro falso). |
+| `GET` | `/config?token=…` | Configuração de e-mail + lista de variáveis. |
+| `POST` | `/config?token=…` | Salva a configuração de e-mail. |
+| `POST` | `/email/teste?token=…` | Manda um e-mail de teste para um endereço. |
+| `POST` | `/lembretes?token=…` | Envia o lembrete a quem ainda não recebeu. |
 | `GET` | `/health` | Usado pelo healthcheck do Docker. Devolve o total. |
 
 Pelo domínio, essas rotas ficam sob `/api/` — o Caddy corta o prefixo antes de
@@ -83,3 +87,45 @@ pip install -r requirements.txt
 BANCO=./teste.db TOKEN_ADMIN=teste python3 app.py
 # a API sobe em http://127.0.0.1:3000
 ```
+
+## E-mails
+
+`emails.py` monta e envia a confirmação da inscrição e o lembrete do dia,
+usando `smtplib` da biblioteca padrão — sem dependência nova.
+
+**A configuração fica no banco, não em variável de ambiente.** Toda ela é
+editada na aba "E-mails" da página `/admin.html`: servidor SMTP, remetente,
+assunto e corpo das duas mensagens. Isso existe para você poder mudar o texto
+de um e-mail sem mexer em código nem reimplantar container.
+
+### Como o texto vira e-mail
+
+Você escreve **texto puro**, com `{{variaveis}}`. No envio:
+
+1. As variáveis são trocadas pelos dados de cada inscrito
+2. Linha em branco vira parágrafo
+3. O texto entra no layout com a marca da Exatta
+
+Ou seja: quem escreve não precisa saber HTML, e o e-mail sai com cara de
+profissional. A versão em texto puro vai junto, para cliente de e-mail que não
+mostra HTML.
+
+As variáveis disponíveis estão em `VARIAVEIS`, e aparecem clicáveis na tela.
+Variável desconhecida vira vazio — nunca aparece `{{errado}}` no e-mail.
+
+### Decisões que valem explicar
+
+**A senha nunca volta para a tela.** O `GET /config` devolve todos os campos
+menos a senha, mais um booleano dizendo se existe uma salva. Ao salvar com o
+campo em branco, a senha atual é mantida — em vez de apagada.
+
+**O envio da confirmação é em segundo plano.** Uma thread cuida disso, então
+SMTP lento ou fora do ar não segura a resposta nem faz a inscrição falhar. Se
+o e-mail não sair, a inscrição está salva do mesmo jeito.
+
+**O lembrete não manda em dobro.** Cada inscrição guarda `lembrete_enviado_em`;
+o disparo só pega quem está sem essa marca, e a marca só é gravada quando o
+envio dá certo. Clicar duas vezes por engano não incomoda ninguém.
+
+**A confirmação leva o convite de agenda anexado** (`.ics`), para a pessoa
+salvar a data com um clique.

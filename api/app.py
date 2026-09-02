@@ -16,10 +16,13 @@ import os
 import re
 import secrets
 import sqlite3
+import threading
 import unicodedata
 from datetime import datetime, timedelta, timezone
 
 from flask import Flask, Response, g, jsonify, request
+
+import emails
 
 BANCO = os.environ.get("BANCO", "/data/inscricoes.db")
 TOKEN_ADMIN = os.environ.get("TOKEN_ADMIN", "").strip()
@@ -58,7 +61,20 @@ CREATE TABLE IF NOT EXISTS inscricoes (
 CREATE INDEX IF NOT EXISTS idx_inscricoes_email    ON inscricoes (email);
 CREATE INDEX IF NOT EXISTS idx_inscricoes_whatsapp ON inscricoes (whatsapp_digitos);
 CREATE INDEX IF NOT EXISTS idx_inscricoes_criado   ON inscricoes (criado_em);
+
+CREATE TABLE IF NOT EXISTS config (
+    chave         TEXT PRIMARY KEY,
+    valor         TEXT NOT NULL,
+    atualizado_em TEXT
+);
 """
+
+# Colunas acrescentadas depois da primeira versão. Entram sem apagar nada:
+# um banco que já tem inscrições continua valendo.
+COLUNAS_NOVAS = {
+    "confirmacao_enviada_em": "TEXT",
+    "lembrete_enviado_em": "TEXT",
+}
 
 
 def conectar():
@@ -83,9 +99,69 @@ def preparar_banco():
         # WAL: leitura (o export em CSV) não trava a escrita de quem se inscreve.
         db.execute("PRAGMA journal_mode = WAL")
         db.executescript(ESQUEMA)
+
+        existentes = {c[1] for c in db.execute("PRAGMA table_info(inscricoes)")}
+        for coluna, tipo in COLUNAS_NOVAS.items():
+            if coluna not in existentes:
+                db.execute(f"ALTER TABLE inscricoes ADD COLUMN {coluna} {tipo}")
+
         db.commit()
     finally:
         db.close()
+
+
+# ------------------------------------------------------------ configuração
+
+def ler_config(db=None):
+    """Configuração completa: o que está salvo, com os padrões preenchendo."""
+    db = db or conectar()
+    cfg = dict(emails.PADRAO)
+    for linha in db.execute("SELECT chave, valor FROM config"):
+        if linha["chave"] in cfg:
+            cfg[linha["chave"]] = linha["valor"]
+    return cfg
+
+
+def gravar_config(db, mudancas):
+    agora = datetime.now(FUSO).isoformat()
+    for chave, valor in mudancas.items():
+        if chave not in emails.PADRAO:
+            continue
+        db.execute(
+            """INSERT INTO config (chave, valor, atualizado_em) VALUES (?, ?, ?)
+               ON CONFLICT(chave) DO UPDATE SET valor = excluded.valor,
+                                                atualizado_em = excluded.atualizado_em""",
+            (chave, str(valor), agora),
+        )
+    db.commit()
+
+
+def config_publica(cfg):
+    """O que a tela pode ver: a senha nunca sai daqui, só se existe."""
+    visivel = {k: v for k, v in cfg.items() if k not in emails.CHAVES_SECRETAS}
+    visivel["smtp_senha_definida"] = bool((cfg.get("smtp_senha") or "").strip())
+    visivel["pronto_para_enviar"] = emails.configurado(cfg)
+    return visivel
+
+
+def enviar_em_segundo_plano(cfg, inscricao_id, inscricao):
+    """O e-mail não pode segurar (nem derrubar) a resposta da inscrição."""
+    def tarefa():
+        assunto, texto, html = emails.montar(cfg, "confirmacao", inscricao)
+        ok, _ = emails.enviar(cfg, inscricao["email"], assunto, texto, html,
+                              anexar_agenda=True)
+        if not ok:
+            return
+        try:
+            db = sqlite3.connect(BANCO, timeout=10)
+            db.execute("UPDATE inscricoes SET confirmacao_enviada_em = ? WHERE id = ?",
+                       (datetime.now(FUSO).isoformat(), inscricao_id))
+            db.commit()
+            db.close()
+        except Exception as erro:
+            app.logger.error("Não consegui marcar a confirmação: %s", erro)
+
+    threading.Thread(target=tarefa, daemon=True).start()
 
 
 # ------------------------------------------------------------ validação
@@ -193,7 +269,18 @@ def criar_inscricao():
         ),
     )
     db.commit()
-    return jsonify({"ok": True, "id": cursor.lastrowid}), 201
+    inscricao_id = cursor.lastrowid
+
+    cfg = ler_config(db)
+    if cfg.get("enviar_confirmacao") == "1" and emails.configurado(cfg):
+        enviar_em_segundo_plano(cfg, inscricao_id, {
+            "nome": limpos["nome"], "email": limpos["email"],
+            "whatsapp": limpos["whatsapp"], "empresa": limpos["empresa"],
+            "regime": ROTULOS_REGIME.get(limpos["regime"], ""),
+            "setor": ROTULOS_SETOR.get(limpos["setor"], ""),
+        })
+
+    return jsonify({"ok": True, "id": inscricao_id}), 201
 
 
 ROTULOS_REGIME = {
@@ -255,6 +342,8 @@ def listar_json():
         "regime": ROTULOS_REGIME.get(l["regime"], ""),
         "setor": ROTULOS_SETOR.get(l["setor"], ""),
         "querKit": bool(l["quer_kit"]),
+        "confirmacaoEnviada": bool(l["confirmacao_enviada_em"]),
+        "lembreteEnviado": bool(l["lembrete_enviado_em"]),
     } for l in linhas]
 
     return jsonify({
@@ -264,6 +353,7 @@ def listar_json():
             "querKit": sum(1 for l in linhas if l["quer_kit"]),
             "simples": sum(1 for l in linhas if l["regime"] == "simples"),
             "ultimas24h": sum(1 for l in linhas if l["criado_em"] >= limite_24h),
+            "lembretePendente": sum(1 for l in linhas if not l["lembrete_enviado_em"]),
         },
         "porRegime": contar(linhas, "regime", ROTULOS_REGIME),
         "porSetor": contar(linhas, "setor", ROTULOS_SETOR),
@@ -283,6 +373,102 @@ def apagar_inscricao(inscricao_id):
     if cursor.rowcount == 0:
         return jsonify({"ok": False, "erro": "Inscrição não encontrada."}), 404
     return jsonify({"ok": True})
+
+
+@app.get("/config")
+def obter_config():
+    if not token_confere():
+        return negar()
+    return jsonify({
+        "ok": True,
+        "config": config_publica(ler_config()),
+        "variaveis": [{"nome": n, "descricao": d} for n, d in emails.VARIAVEIS],
+        "padroes": {k: emails.PADRAO[k] for k in
+                    ("assunto_confirmacao", "corpo_confirmacao",
+                     "assunto_lembrete", "corpo_lembrete")},
+    })
+
+
+@app.post("/config")
+def salvar_config():
+    if not token_confere():
+        return negar()
+
+    dados = corpo_da_requisicao()
+    mudancas = {}
+    for chave in emails.PADRAO:
+        if chave not in dados:
+            continue
+        valor = dados[chave]
+        # Senha em branco significa "mantenha a que já está", não "apague".
+        if chave in emails.CHAVES_SECRETAS and not str(valor).strip():
+            continue
+        mudancas[chave] = valor
+
+    if "smtp_porta" in mudancas:
+        try:
+            int(mudancas["smtp_porta"])
+        except (TypeError, ValueError):
+            return jsonify({"ok": False, "erro": "Porta inválida."}), 422
+
+    gravar_config(conectar(), mudancas)
+    return jsonify({"ok": True, "config": config_publica(ler_config())})
+
+
+@app.post("/email/teste")
+def testar_email():
+    """Manda um e-mail de teste com a configuração salva."""
+    if not token_confere():
+        return negar()
+
+    dados = corpo_da_requisicao()
+    destino = limpar(dados.get("destino"), 160)
+    if not RE_EMAIL.match(destino):
+        return jsonify({"ok": False, "erro": "Informe um e-mail válido para o teste."}), 422
+
+    tipo = dados.get("tipo") if dados.get("tipo") in ("confirmacao", "lembrete") else "confirmacao"
+    cfg = ler_config()
+    assunto, texto, html = emails.montar(cfg, tipo)
+    ok, mensagem = emails.enviar(cfg, destino, assunto, texto, html,
+                                 anexar_agenda=(tipo == "confirmacao"))
+    return jsonify({"ok": ok, "mensagem": mensagem}), (200 if ok else 502)
+
+
+@app.post("/lembretes")
+def enviar_lembretes():
+    """Dispara o lembrete para quem ainda não recebeu."""
+    if not token_confere():
+        return negar()
+
+    cfg = ler_config()
+    if not emails.configurado(cfg):
+        return jsonify({"ok": False, "erro": "Configure o SMTP antes de enviar."}), 422
+
+    db = conectar()
+    pendentes = db.execute(
+        "SELECT * FROM inscricoes WHERE lembrete_enviado_em IS NULL ORDER BY id"
+    ).fetchall()
+
+    enviados, falhas, ultimo_erro = 0, 0, ""
+    for linha in pendentes:
+        assunto, texto, html = emails.montar(cfg, "lembrete", {
+            "nome": linha["nome"], "email": linha["email"],
+            "whatsapp": linha["whatsapp"], "empresa": linha["empresa"],
+            "regime": ROTULOS_REGIME.get(linha["regime"], ""),
+            "setor": ROTULOS_SETOR.get(linha["setor"], ""),
+        })
+        ok, mensagem = emails.enviar(cfg, linha["email"], assunto, texto, html)
+        if ok:
+            db.execute("UPDATE inscricoes SET lembrete_enviado_em = ? WHERE id = ?",
+                       (datetime.now(FUSO).isoformat(), linha["id"]))
+            db.commit()
+            enviados += 1
+        else:
+            falhas += 1
+            ultimo_erro = mensagem
+
+    return jsonify({"ok": True, "enviados": enviados, "falhas": falhas,
+                    "pendentes": len(pendentes), "erro": ultimo_erro})
 
 
 @app.get("/inscricoes.csv")

@@ -126,6 +126,13 @@
       var el = document.querySelector('[data-kpi="' + chave + '"]');
       if (el) el.textContent = resumo[chave] == null ? '—' : resumo[chave];
     });
+    var pendentes = document.querySelector('[data-pendentes]');
+    if (pendentes) {
+      var n = resumo.lembretePendente || 0;
+      pendentes.textContent = n
+        ? n + ' ainda não recebeu' + (n > 1 ? 'ram' : '') + '.'
+        : 'Todos já receberam.';
+    }
   }
 
   /* Barras de uma série só: tom único, valor rotulado no fim, sem legenda —
@@ -271,6 +278,175 @@
         botao.disabled = false;
         mostrarAviso('Não conseguimos apagar essa inscrição. Tente novamente.');
       });
+  });
+
+  /* ============================ aba de e-mails ========================== */
+
+  var formConfig = document.getElementById('form-config');
+  var estadoConfig = document.querySelector('[data-config-estado]');
+  var ultimoCampo = null;   // onde inserir a variável clicada
+
+  var CAMPOS_CONFIG = ['smtp_host', 'smtp_porta', 'smtp_usuario', 'smtp_senha',
+    'email_de', 'nome_de', 'responder_para', 'assunto_confirmacao',
+    'corpo_confirmacao', 'assunto_lembrete', 'corpo_lembrete'];
+
+  function trocarAba(qual) {
+    document.querySelectorAll('[data-aba]').forEach(function (b) {
+      b.setAttribute('aria-pressed', String(b.getAttribute('data-aba') === qual));
+    });
+    document.querySelectorAll('[data-conteudo]').forEach(function (c) {
+      c.hidden = c.getAttribute('data-conteudo') !== qual;
+    });
+    if (qual === 'config') carregarConfig();
+  }
+
+  document.querySelectorAll('[data-aba]').forEach(function (botao) {
+    botao.addEventListener('click', function () {
+      trocarAba(botao.getAttribute('data-aba'));
+    });
+  });
+
+  function carregarConfig() {
+    return fetch(API + '/config?token=' + encodeURIComponent(token))
+      .then(function (r) { return r.json(); })
+      .then(function (dados) {
+        if (!dados.ok) throw new Error('config');
+        var c = dados.config || {};
+        CAMPOS_CONFIG.forEach(function (chave) {
+          var campo = document.getElementById(chave);
+          if (campo && chave !== 'smtp_senha') campo.value = c[chave] || '';
+        });
+        document.getElementById('enviar_confirmacao').checked = c.enviar_confirmacao === '1';
+        document.querySelector('[data-senha-estado]').textContent = c.smtp_senha_definida
+          ? 'Já existe uma senha salva. Deixe em branco para mantê-la.'
+          : 'Ainda não configurada — o envio está desligado.';
+        renderizarVariaveis(dados.variaveis || []);
+        return true;
+      })
+      .catch(function () {
+        mostrarAviso('Não consegui ler as configurações de e-mail.');
+      });
+  }
+
+  function renderizarVariaveis(lista) {
+    var alvo = document.querySelector('[data-variaveis]');
+    if (alvo.childElementCount) return;
+    alvo.innerHTML = lista.map(function (v) {
+      return '<button type="button" class="variavel" data-inserir="{{' + v.nome + '}}"' +
+             ' title="' + escapar(v.descricao) + '">{{' + v.nome + '}}</button>';
+    }).join('');
+  }
+
+  /* Guarda o último campo de texto tocado, para saber onde inserir. */
+  ['focusin', 'click', 'keyup'].forEach(function (evento) {
+    formConfig.addEventListener(evento, function (e) {
+      var alvo = e.target;
+      if (alvo.tagName === 'TEXTAREA' || (alvo.tagName === 'INPUT' && alvo.type === 'text')) {
+        ultimoCampo = alvo;
+      }
+    });
+  });
+
+  document.querySelector('[data-variaveis]').addEventListener('click', function (e) {
+    var botao = e.target.closest('[data-inserir]');
+    if (!botao) return;
+    var texto = botao.getAttribute('data-inserir');
+    var campo = ultimoCampo || document.getElementById('corpo_confirmacao');
+    var inicio = campo.selectionStart == null ? campo.value.length : campo.selectionStart;
+    var fim = campo.selectionEnd == null ? campo.value.length : campo.selectionEnd;
+    campo.value = campo.value.slice(0, inicio) + texto + campo.value.slice(fim);
+    campo.focus();
+    campo.setSelectionRange(inicio + texto.length, inicio + texto.length);
+    ultimoCampo = campo;
+  });
+
+  formConfig.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var dados = {};
+    CAMPOS_CONFIG.forEach(function (chave) {
+      var campo = document.getElementById(chave);
+      if (campo) dados[chave] = campo.value;
+    });
+    dados.enviar_confirmacao = document.getElementById('enviar_confirmacao').checked ? '1' : '0';
+
+    estadoConfig.className = 'barra-nota';
+    estadoConfig.textContent = 'Salvando…';
+
+    fetch(API + '/config?token=' + encodeURIComponent(token), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(dados)
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (resposta) {
+        if (!resposta.ok) throw new Error(resposta.erro || 'falha');
+        document.getElementById('smtp_senha').value = '';
+        estadoConfig.className = 'barra-nota ok';
+        estadoConfig.textContent = 'Salvo.';
+        carregarConfig();
+      })
+      .catch(function (erro) {
+        estadoConfig.className = 'barra-nota erro';
+        estadoConfig.textContent = 'Não consegui salvar: ' + erro.message;
+      });
+  });
+
+  function responder(seletor, ok, texto) {
+    var el = document.querySelector(seletor);
+    el.className = 'teste-resposta ' + (ok ? 'ok' : 'erro');
+    el.textContent = texto;
+    el.hidden = false;
+  }
+
+  document.querySelectorAll('[data-teste]').forEach(function (botao) {
+    botao.addEventListener('click', function () {
+      var destino = document.getElementById('teste_destino').value.trim();
+      if (!destino) {
+        responder('[data-teste-resposta]', false, 'Informe um e-mail para receber o teste.');
+        return;
+      }
+      botao.disabled = true;
+      responder('[data-teste-resposta]', true, 'Enviando…');
+
+      fetch(API + '/email/teste?token=' + encodeURIComponent(token), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ destino: destino, tipo: botao.getAttribute('data-teste') })
+      })
+        .then(function (r) { return r.json(); })
+        .then(function (resposta) {
+          responder('[data-teste-resposta]', resposta.ok,
+            resposta.ok ? 'Enviado para ' + destino + '. Confira a caixa de entrada (e o spam).'
+                        : resposta.erro || resposta.mensagem);
+        })
+        .catch(function () {
+          responder('[data-teste-resposta]', false, 'Não consegui falar com o servidor.');
+        })
+        .then(function () { botao.disabled = false; });
+    });
+  });
+
+  document.querySelector('[data-enviar-lembretes]').addEventListener('click', function (e) {
+    var botao = e.currentTarget;
+    if (!window.confirm('Enviar o lembrete para todos os inscritos que ainda não receberam?')) return;
+
+    botao.disabled = true;
+    responder('[data-lembrete-resposta]', true, 'Enviando…');
+
+    fetch(API + '/lembretes?token=' + encodeURIComponent(token), { method: 'POST' })
+      .then(function (r) { return r.json(); })
+      .then(function (resposta) {
+        if (!resposta.ok) throw new Error(resposta.erro || 'falha');
+        var texto = resposta.enviados + ' lembrete(s) enviado(s).';
+        if (resposta.falhas) texto += ' ' + resposta.falhas + ' falharam — ' + resposta.erro;
+        if (!resposta.pendentes) texto = 'Todos os inscritos já haviam recebido o lembrete.';
+        responder('[data-lembrete-resposta]', !resposta.falhas, texto);
+        carregar(true);
+      })
+      .catch(function (erro) {
+        responder('[data-lembrete-resposta]', false, erro.message);
+      })
+      .then(function () { botao.disabled = false; });
   });
 
   /* -------------------------------------------------------------- abertura */

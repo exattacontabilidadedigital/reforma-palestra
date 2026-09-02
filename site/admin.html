@@ -28,6 +28,8 @@
   <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></symbol>
   <symbol id="i-logout" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
   <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path d="M12 8v5"/><path d="M12 16.5h.01"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></symbol>
 </svg>
 
 <!-- ============================ Entrada ============================ -->
@@ -62,6 +64,13 @@
         </div>
       </div>
       <div class="topo-acoes">
+        <button class="botao botao--fantasma" type="button" data-aba="inscritos" aria-pressed="true">
+          <span>Inscritos</span>
+        </button>
+        <button class="botao botao--fantasma" type="button" data-aba="config" aria-pressed="false">
+          <svg class="ico-16"><use href="#i-mail"></use></svg>
+          <span>E-mails</span>
+        </button>
         <button class="botao botao--fantasma" type="button" data-atualizar>
           <svg class="ico-16"><use href="#i-refresh"></use></svg>
           <span>Atualizar</span>
@@ -83,6 +92,137 @@
       <svg class="ico-18"><use href="#i-alert"></use></svg>
       <p data-aviso-texto></p>
     </div>
+
+    <!-- ====================== Aba: e-mails ====================== -->
+    <div data-conteudo="config" hidden>
+      <form class="colunas-config" id="form-config">
+
+        <section class="cartao">
+          <h2 class="cartao-titulo">Servidor de envio (SMTP)</h2>
+          <p class="cartao-nota">Os dados do Resend. A senha é a sua API key — ela
+            fica guardada no servidor e nunca mais é mostrada aqui.</p>
+
+          <div class="grade-campos">
+            <div class="campo">
+              <label class="campo-rotulo" for="smtp_host">Servidor</label>
+              <div class="campo-controle"><input id="smtp_host" name="smtp_host" type="text" placeholder="smtp.resend.com"></div>
+            </div>
+            <div class="campo campo--curto">
+              <label class="campo-rotulo" for="smtp_porta">Porta</label>
+              <div class="campo-controle"><input id="smtp_porta" name="smtp_porta" type="text" inputmode="numeric" placeholder="465"></div>
+            </div>
+            <div class="campo">
+              <label class="campo-rotulo" for="smtp_usuario">Usuário</label>
+              <div class="campo-controle"><input id="smtp_usuario" name="smtp_usuario" type="text" placeholder="resend"></div>
+            </div>
+            <div class="campo">
+              <label class="campo-rotulo" for="smtp_senha">Senha / API key</label>
+              <div class="campo-controle"><input id="smtp_senha" name="smtp_senha" type="password" autocomplete="new-password" placeholder="re_..."></div>
+              <span class="campo-dica" data-senha-estado></span>
+            </div>
+            <div class="campo">
+              <label class="campo-rotulo" for="email_de">Enviar como</label>
+              <div class="campo-controle"><input id="email_de" name="email_de" type="email" placeholder="palestra@seudominio.com.br"></div>
+              <span class="campo-dica">Precisa ser de um domínio verificado no Resend.</span>
+            </div>
+            <div class="campo">
+              <label class="campo-rotulo" for="nome_de">Nome do remetente</label>
+              <div class="campo-controle"><input id="nome_de" name="nome_de" type="text" placeholder="Exatta Contabilidade Digital"></div>
+            </div>
+            <div class="campo">
+              <label class="campo-rotulo" for="responder_para">Responder para</label>
+              <div class="campo-controle"><input id="responder_para" name="responder_para" type="email" placeholder="contato@seudominio.com.br"></div>
+              <span class="campo-dica">Opcional: para onde vão as respostas.</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="cartao">
+          <div class="cartao-cabecalho">
+            <h2 class="cartao-titulo">E-mail de confirmação</h2>
+            <label class="interruptor">
+              <input type="checkbox" id="enviar_confirmacao" name="enviar_confirmacao">
+              <span>Enviar ao se inscrever</span>
+            </label>
+          </div>
+          <div class="campo">
+            <label class="campo-rotulo" for="assunto_confirmacao">Assunto</label>
+            <div class="campo-controle"><input id="assunto_confirmacao" name="assunto_confirmacao" type="text"></div>
+          </div>
+          <div class="campo">
+            <label class="campo-rotulo" for="corpo_confirmacao">Mensagem</label>
+            <textarea class="area" id="corpo_confirmacao" name="corpo_confirmacao" rows="12"></textarea>
+            <span class="campo-dica">Escreva em texto normal. Linha em branco separa parágrafo,
+              e o layout com a sua marca é aplicado no envio.</span>
+          </div>
+        </section>
+
+        <section class="cartao">
+          <h2 class="cartao-titulo">E-mail de lembrete</h2>
+          <p class="cartao-nota">Enviado quando você clicar no botão, no dia do evento.</p>
+          <div class="campo">
+            <label class="campo-rotulo" for="assunto_lembrete">Assunto</label>
+            <div class="campo-controle"><input id="assunto_lembrete" name="assunto_lembrete" type="text"></div>
+          </div>
+          <div class="campo">
+            <label class="campo-rotulo" for="corpo_lembrete">Mensagem</label>
+            <textarea class="area" id="corpo_lembrete" name="corpo_lembrete" rows="10"></textarea>
+          </div>
+        </section>
+
+        <section class="cartao">
+          <h2 class="cartao-titulo">Variáveis</h2>
+          <p class="cartao-nota">Clique para inserir no campo onde o cursor estava.
+            Elas são trocadas pelos dados de cada inscrito no momento do envio.</p>
+          <div class="variaveis" data-variaveis></div>
+        </section>
+
+        <div class="barra-acoes">
+          <button class="botao botao--primario" type="submit">Salvar alterações</button>
+          <span class="barra-nota" data-config-estado></span>
+        </div>
+      </form>
+
+      <section class="cartao">
+        <h2 class="cartao-titulo">Testar e enviar</h2>
+
+        <div class="teste">
+          <div class="campo">
+            <label class="campo-rotulo" for="teste_destino">Enviar um teste para</label>
+            <div class="campo-controle"><input id="teste_destino" type="email" placeholder="seu@email.com.br"></div>
+          </div>
+          <div class="teste-botoes">
+            <button class="botao botao--secundario" type="button" data-teste="confirmacao">
+              <svg class="ico-16"><use href="#i-send"></use></svg>
+              <span>Testar confirmação</span>
+            </button>
+            <button class="botao botao--secundario" type="button" data-teste="lembrete">
+              <svg class="ico-16"><use href="#i-send"></use></svg>
+              <span>Testar lembrete</span>
+            </button>
+          </div>
+          <p class="teste-resposta" data-teste-resposta hidden></p>
+        </div>
+
+        <hr class="divisor">
+
+        <div class="disparo">
+          <div class="disparo-texto">
+            <h3 class="disparo-titulo">Enviar o lembrete para todos</h3>
+            <p class="disparo-nota">Vai para quem ainda não recebeu — clicar duas vezes
+              não manda em dobro. <strong data-pendentes>—</strong></p>
+          </div>
+          <button class="botao botao--primario" type="button" data-enviar-lembretes>
+            <svg class="ico-16"><use href="#i-send"></use></svg>
+            <span>Enviar lembrete</span>
+          </button>
+        </div>
+        <p class="teste-resposta" data-lembrete-resposta hidden></p>
+      </section>
+    </div>
+
+    <!-- ====================== Aba: inscritos ==================== -->
+    <div data-conteudo="inscritos">
 
     <!-- Indicadores: números, não gráfico — a leitura é o valor em si -->
     <section class="indicadores" aria-label="Resumo das inscrições">
@@ -156,6 +296,7 @@
     <p class="rodape-nota">
       Atualiza sozinho a cada minuto. Última leitura: <span data-atualizado-em>—</span>
     </p>
+    </div>
   </main>
 </div>
 
