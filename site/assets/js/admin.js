@@ -67,6 +67,14 @@
     aviso.hidden = false;
   }
 
+  /* Toda chamada à API passa por aqui: a senha vai no cabeçalho, nunca na URL —
+     query string fica gravada no log do servidor e no histórico do navegador. */
+  function pedir(caminho, opcoes) {
+    var o = opcoes || {};
+    o.headers = Object.assign({ 'X-Token': token }, o.headers || {});
+    return fetch(API + caminho, o);
+  }
+
   /* ----------------------------------------------------------------- telas */
 
   function abrirEntrada(mensagem) {
@@ -84,15 +92,51 @@
   function abrirPainel() {
     telaEntrada.hidden = true;
     telaPainel.hidden = false;
-    document.querySelector('[data-baixar-csv]').href =
-      API + '/inscricoes.csv?token=' + encodeURIComponent(token);
     if (!timer) timer = setInterval(function () { carregar(true); }, INTERVALO);
+  }
+
+  /* O CSV não pode ser um link comum: link não carrega cabeçalho, e voltaria a
+     levar a senha na URL. Buscamos o arquivo e entregamos o download. */
+  function baixarCsv(botao) {
+    var rotulo = botao.querySelector('span');
+    var original = rotulo.textContent;
+    rotulo.textContent = 'Baixando…';
+    botao.disabled = true;
+
+    pedir('/inscricoes.csv')
+      .then(function (r) {
+        if (r.status === 403) { var e = new Error('403'); e.negado = true; throw e; }
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.blob();
+      })
+      .then(function (blob) {
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement('a');
+        link.href = url;
+        link.download = 'inscricoes-palestra.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      })
+      .catch(function (erro) {
+        if (erro && erro.negado) {
+          esquecerToken();
+          abrirEntrada('Senha inválida.');
+          return;
+        }
+        mostrarAviso('Não consegui baixar o CSV. Tente de novo em instantes.');
+      })
+      .then(function () {
+        rotulo.textContent = original;
+        botao.disabled = false;
+      });
   }
 
   /* ------------------------------------------------------------------ dados */
 
   function carregar(silencioso) {
-    return fetch(API + '/inscricoes.json?token=' + encodeURIComponent(token))
+    return pedir('/inscricoes.json')
       .then(function (r) {
         if (r.status === 403) { var e = new Error('403'); e.negado = true; throw e; }
         if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -232,6 +276,10 @@
     carregar().catch(function () {});
   });
 
+  document.querySelector('[data-baixar-csv]').addEventListener('click', function (e) {
+    baixarCsv(e.currentTarget);
+  });
+
   document.querySelector('[data-sair]').addEventListener('click', function () {
     esquecerToken();
     token = '';
@@ -269,7 +317,7 @@
     if (!window.confirm('Apagar a inscrição de ' + (pessoa ? pessoa.nome : id) + '? Isso não tem volta.')) return;
 
     botao.disabled = true;
-    fetch(API + '/inscricoes/' + id + '?token=' + encodeURIComponent(token), { method: 'DELETE' })
+    pedir('/inscricoes/' + id, { method: 'DELETE' })
       .then(function (r) {
         if (!r.ok) throw new Error('HTTP ' + r.status);
         return carregar();
@@ -307,7 +355,7 @@
   });
 
   function carregarConfig() {
-    return fetch(API + '/config?token=' + encodeURIComponent(token))
+    return pedir('/config')
       .then(function (r) { return r.json(); })
       .then(function (dados) {
         if (!dados.ok) throw new Error('config');
@@ -372,7 +420,7 @@
     estadoConfig.className = 'barra-nota';
     estadoConfig.textContent = 'Salvando…';
 
-    fetch(API + '/config?token=' + encodeURIComponent(token), {
+    pedir('/config', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(dados)
@@ -408,7 +456,7 @@
       botao.disabled = true;
       responder('[data-teste-resposta]', true, 'Enviando…');
 
-      fetch(API + '/email/teste?token=' + encodeURIComponent(token), {
+      pedir('/email/teste', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ destino: destino, tipo: botao.getAttribute('data-teste') })
@@ -433,7 +481,7 @@
     botao.disabled = true;
     responder('[data-lembrete-resposta]', true, 'Enviando…');
 
-    fetch(API + '/lembretes?token=' + encodeURIComponent(token), { method: 'POST' })
+    pedir('/lembretes', { method: 'POST' })
       .then(function (r) { return r.json(); })
       .then(function (resposta) {
         if (!resposta.ok) throw new Error(resposta.erro || 'falha');

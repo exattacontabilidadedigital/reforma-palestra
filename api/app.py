@@ -294,16 +294,34 @@ ROTULOS_SETOR = {
 
 
 def token_confere():
-    """Compara em tempo constante: comparação normal vaza o token aos poucos."""
+    """
+    O token vem por cabeçalho, nunca pela URL: query string entra no log do
+    servidor e no histórico do navegador, e a senha viajaria junto.
+
+    Aceita 'X-Token: senha' ou 'Authorization: Bearer senha'.
+
+    A comparação é em tempo constante — comparação normal termina no primeiro
+    caractere diferente, e esse tempo a mais entrega o token aos poucos.
+    """
     if not TOKEN_ADMIN:
         return False
-    enviado = request.args.get("token", "") or request.headers.get("X-Token", "")
+
+    enviado = request.headers.get("X-Token", "")
+    if not enviado:
+        autorizacao = request.headers.get("Authorization", "")
+        if autorizacao.startswith("Bearer "):
+            enviado = autorizacao[7:]
+
     return secrets.compare_digest(enviado, TOKEN_ADMIN)
 
 
 def negar():
     if not TOKEN_ADMIN:
         return jsonify({"ok": False, "erro": "Área restrita desativada: defina TOKEN_ADMIN."}), 403
+    if request.args.get("token"):
+        return jsonify({"ok": False, "erro":
+                        "A senha agora vai no cabeçalho, não na URL. "
+                        "Use: -H \"X-Token: sua-senha\""}), 403
     return jsonify({"ok": False, "erro": "Senha inválida."}), 403
 
 

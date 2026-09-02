@@ -9,22 +9,37 @@ aqui através de `/api/` no domínio do site.
 | Método | Rota | O que faz |
 |---|---|---|
 | `POST` | `/inscricoes` | Grava uma inscrição. Aceita JSON ou formulário. |
-| `GET` | `/inscricoes.json?token=…` | Lista + resumo. Alimenta a página `/admin.html`. |
-| `GET` | `/inscricoes.csv?token=…` | Exporta tudo em CSV. |
-| `DELETE` | `/inscricoes/<id>?token=…` | Apaga uma inscrição (teste seu ou cadastro falso). |
-| `GET` | `/config?token=…` | Configuração de e-mail + lista de variáveis. |
-| `POST` | `/config?token=…` | Salva a configuração de e-mail. |
-| `POST` | `/email/teste?token=…` | Manda um e-mail de teste para um endereço. |
-| `POST` | `/lembretes?token=…` | Envia o lembrete a quem ainda não recebeu. |
+| `GET` | `/inscricoes.json` 🔒 | Lista + resumo. Alimenta a página `/admin.html`. |
+| `GET` | `/inscricoes.csv` 🔒 | Exporta tudo em CSV. |
+| `DELETE` | `/inscricoes/<id>` 🔒 | Apaga uma inscrição (teste seu ou cadastro falso). |
+| `GET` | `/config` 🔒 | Configuração de e-mail + lista de variáveis. |
+| `POST` | `/config` 🔒 | Salva a configuração de e-mail. |
+| `POST` | `/email/teste` 🔒 | Manda um e-mail de teste para um endereço. |
+| `POST` | `/lembretes` 🔒 | Envia o lembrete a quem ainda não recebeu. |
 | `GET` | `/health` | Usado pelo healthcheck do Docker. Devolve o total. |
 
 Pelo domínio, essas rotas ficam sob `/api/` — o Caddy corta o prefixo antes de
-encaminhar. As rotas com `token` exigem o `TOKEN_ADMIN`; sem ele configurado,
-respondem `403` e a área restrita fica desligada.
+encaminhar.
 
-A comparação do token é feita com `secrets.compare_digest`: comparação comum
-termina no primeiro caractere diferente, e esse tempo a mais entrega o token
-aos poucos para quem estiver medindo.
+## A senha vai no cabeçalho
+
+Todas as rotas marcadas com 🔒 exigem o `TOKEN_ADMIN`, **num cabeçalho**:
+
+```bash
+curl -H "X-Token: sua-senha" https://SEU-DOMINIO/api/inscricoes.json
+curl -H "Authorization: Bearer sua-senha" https://SEU-DOMINIO/api/inscricoes.csv -o lista.csv
+```
+
+Não vai na URL de propósito: query string entra no log de acesso do servidor e
+no histórico do navegador, e a senha viajaria junto em cada requisição. Quem
+tentar pela URL recebe um `403` explicando o formato certo.
+
+Sem `TOKEN_ADMIN` configurado, essas rotas respondem `403` e a área restrita
+fica desligada.
+
+A comparação é feita com `secrets.compare_digest`: comparação comum termina no
+primeiro caractere diferente, e esse tempo a mais entrega o token aos poucos
+para quem estiver medindo.
 
 ### Respostas do `POST /inscricoes`
 

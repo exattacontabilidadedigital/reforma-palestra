@@ -162,14 +162,18 @@ recorte) e o botão de apagar, para tirar da lista os seus testes.
 A página atualiza sozinha a cada minuto. A senha fica guardada só na aba: ao
 fechar o navegador, ela é pedida de novo.
 
-**Baixar em CSV.** Pelo botão da página, ou direto:
+**Baixar em CSV.** Pelo botão **Baixar CSV** da própria página. O arquivo abre
+no Excel com dois cliques — separador `;` e acentuação correta.
 
-```
-https://palestra.seudominio.com.br/api/inscricoes.csv?token=SEU-TOKEN
+Pelo terminal, a senha vai num cabeçalho:
+
+```bash
+curl -H "X-Token: SUA-SENHA" https://palestra.seudominio.com.br/api/inscricoes.csv -o inscritos.csv
 ```
 
-Baixa um CSV que o Excel abre com dois cliques — separador `;` e acentuação
-correta.
+Não existe link com a senha na URL, e isso é de propósito: query string fica
+gravada no log de acesso do servidor e no histórico do navegador. Se você tinha
+um link assim nos favoritos, ele agora responde um aviso — use o botão.
 
 **Pelo terminal, se quiser consultar na hora:**
 
